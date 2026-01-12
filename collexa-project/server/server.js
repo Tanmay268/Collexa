@@ -25,7 +25,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Security middleware
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'", "data:"],
+      },
+    },
+  })
+);
+
 app.use(mongoSanitize());
 
 // CORS
@@ -52,6 +66,34 @@ app.use('/api/admin', adminRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Collexa API is running' });
 });
+
+// ===============================
+// Serve React frontend (PRODUCTION)
+// ===============================
+if (process.env.NODE_ENV === 'production') {
+  const publicPath = path.join(__dirname, 'public');
+
+  app.use(express.static(publicPath));
+
+  // Explicit root handler
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  });
+
+  // React Router fallback
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  });
+}
+
+
+// Handle unknown API routes
+app.use('/api', (req, res, next) => {
+  const error = new Error(`API route not found: ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
+});
+
 
 // Error handler
 app.use(errorHandler);
