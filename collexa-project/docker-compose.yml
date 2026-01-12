@@ -1,11 +1,25 @@
-version: "3"
-services:
-  backend:
-    build: ./server
-    ports:
-      - "587:587"
+version: "3.9"
 
-  frontend:
-    build: ./client
+services:
+  server:
+    build: .
+    container_name: collexa-backend
     ports:
-      - "5173:5173"
+      - "5000:5000"
+    env_file:
+      - server/.env
+    depends_on:
+      - mongo
+    restart: always
+
+  mongo:
+    image: mongo:7
+    container_name: collexa-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
