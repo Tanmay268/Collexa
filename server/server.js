@@ -32,7 +32,7 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https://via.placeholder.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://via.placeholder.com"],
         connectSrc: ["'self'"],
         fontSrc: ["'self'", "data:"],
       },
