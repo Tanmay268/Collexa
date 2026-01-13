@@ -7,14 +7,29 @@ export default function MyListings() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
+  // Extract image URL - handle both Cloudinary objects and legacy strings
+  const getImageUrl = (image) => {
+    if (!image) return '/placeholder.svg';
+    // If it's a Cloudinary object with url property
+    if (typeof image === 'object' && image.url) return image.url;
+    // If it's already a full URL string
+    if (typeof image === 'string' && image.startsWith('http')) return image;
+    // Legacy: relative path
+    if (typeof image === 'string') return `${import.meta.env.VITE_API_URL || ''}/api/uploads/${image}`;
+    return '/placeholder.svg';
+  };
+
   useEffect(() => {
     fetchMyListings();
   }, [filter]);
 
   const fetchMyListings = async () => {
     try {
-      const status = filter === 'all' ? '' : filter;
-      const data = await api.get('/listings/my-listings', { params: { status } });
+      let url = '/listings/my-listings';
+      if (filter && filter !== 'all') {
+        url += `?status=${filter}`;
+      }
+      const data = await api.get(url);
       setListings(data.listings || []);
     } catch (error) {
       console.error('Error:', error);
@@ -66,8 +81,11 @@ export default function MyListings() {
         <div className="grid gap-4">
           {listings.map(listing => (
             <div key={listing._id} className="bg-white p-4 rounded-lg shadow flex gap-4">
-              <img src={listing.images?.[0] ? `${import.meta.env.VITE_API_URL || ''}/api/uploads/${listing.images[0]}`
-                : '/placeholder.svg'} alt={listing.title} className="w-32 h-32 object-cover rounded" />
+              <img
+                src={getImageUrl(listing.images?.[0])}
+                alt={listing.title}
+                className="w-32 h-32 object-cover rounded"
+              />
               <div className="flex-1">
                 <div className="flex justify-between">
                   <div>

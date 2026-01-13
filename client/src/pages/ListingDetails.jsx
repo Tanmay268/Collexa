@@ -72,8 +72,19 @@ export default function ListingDetails() {
     );
   }
 
-  const images = listing.images?.map(img => `${import.meta.env.VITE_API_URL || ''}/api/uploads/${img}`
-  ) || [];
+  // Extract image URLs - handle both Cloudinary objects and legacy strings
+  const getImageUrl = (image) => {
+    if (!image) return '/placeholder.svg';
+    // If it's a Cloudinary object with url property
+    if (typeof image === 'object' && image.url) return image.url;
+    // If it's already a full URL string
+    if (typeof image === 'string' && image.startsWith('http')) return image;
+    // Legacy: relative path
+    if (typeof image === 'string') return `${import.meta.env.VITE_API_URL || ''}/api/uploads/${image}`;
+    return '/placeholder.svg';
+  };
+
+  const images = listing.images?.map(img => getImageUrl(img)) || [];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 sm:pb-8">

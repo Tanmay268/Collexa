@@ -1,8 +1,20 @@
 import { Link } from 'react-router-dom';
 
 export default function ListingCard({ listing }) {
+  // Extract image URL - handle both Cloudinary objects and legacy strings
+  const getImageUrl = (image) => {
+    if (!image) return '/placeholder.svg';
+    // If it's a Cloudinary object with url property
+    if (typeof image === 'object' && image.url) return image.url;
+    // If it's already a full URL string
+    if (typeof image === 'string' && image.startsWith('http')) return image;
+    // Legacy: relative path
+    if (typeof image === 'string') return `${import.meta.env.VITE_API_URL || ''}/api/uploads/${image}`;
+    return '/placeholder.svg';
+  };
+
   const imageUrl = listing.images && listing.images.length > 0
-    ? `${import.meta.env.VITE_API_URL || ''}/api/uploads/${listing.images[0]}`
+    ? getImageUrl(listing.images[0])
     : '/placeholder.svg';
 
   return (
