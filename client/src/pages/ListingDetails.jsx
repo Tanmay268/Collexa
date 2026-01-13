@@ -37,18 +37,18 @@ export default function ListingDetails() {
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const minSwipeDistance = 50;
-    
+
     if (distance > minSwipeDistance && currentImage < images.length - 1) {
       setCurrentImage(currentImage + 1);
     }
-    
+
     if (distance < -minSwipeDistance && currentImage > 0) {
       setCurrentImage(currentImage - 1);
     }
-    
+
     setTouchStart(0);
     setTouchEnd(0);
   };
@@ -73,7 +73,7 @@ export default function ListingDetails() {
   }
 
   const images = listing.images?.map(img => `${import.meta.env.VITE_API_URL}/api/uploads/${img}`
-) || [];
+  ) || [];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 sm:pb-8">
@@ -103,7 +103,7 @@ export default function ListingDetails() {
                 onTouchEnd={handleTouchEnd}
               >
                 <img
-                  src={images[currentImage] || 'https://via.placeholder.com/600x400'}
+                  src={images[currentImage] || '/placeholder.svg'}
                   alt={listing.title}
                   className="w-full h-full object-contain"
                 />
@@ -139,9 +139,8 @@ export default function ListingDetails() {
                       <button
                         key={idx}
                         onClick={() => setCurrentImage(idx)}
-                        className={`h-2 rounded-full transition-all ${
-                          idx === currentImage ? 'w-8 bg-white' : 'w-2 bg-white/50'
-                        }`}
+                        className={`h-2 rounded-full transition-all ${idx === currentImage ? 'w-8 bg-white' : 'w-2 bg-white/50'
+                          }`}
                       />
                     ))}
                   </div>
@@ -156,9 +155,8 @@ export default function ListingDetails() {
                   <button
                     key={idx}
                     onClick={() => setCurrentImage(idx)}
-                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                      currentImage === idx ? 'border-blue-600' : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
+                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${currentImage === idx ? 'border-blue-600' : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -181,12 +179,11 @@ export default function ListingDetails() {
                 <span className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-semibold">
                   {listing.category}
                 </span>
-                <span className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${
-                  listing.condition === 'New' ? 'bg-green-100 text-green-700' :
-                  listing.condition === 'Like New' ? 'bg-blue-100 text-blue-700' :
-                  listing.condition === 'Good' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-orange-100 text-orange-700'
-                }`}>
+                <span className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${listing.condition === 'New' ? 'bg-green-100 text-green-700' :
+                    listing.condition === 'Like New' ? 'bg-blue-100 text-blue-700' :
+                      listing.condition === 'Good' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-orange-100 text-orange-700'
+                  }`}>
                   {listing.condition}
                 </span>
               </div>

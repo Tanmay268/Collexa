@@ -27,19 +27,19 @@ export default function CreateListing() {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length + images.length > 5) {
       setError('Maximum 5 images allowed');
       return;
     }
-    
+
     // Validate file sizes
     const invalidFiles = files.filter(file => file.size > 5242880); // 5MB
     if (invalidFiles.length > 0) {
       setError('Each image must be under 5MB');
       return;
     }
-    
+
     // Create previews
     const newPreviews = files.map(file => URL.createObjectURL(file));
     setImagePreviews(prev => [...prev, ...newPreviews]);
@@ -55,23 +55,23 @@ export default function CreateListing() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate
     if (!formData.title || formData.title.length < 5) {
       setError('Title must be at least 5 characters');
       return;
     }
-    
+
     if (!formData.description || formData.description.length < 10) {
       setError('Description must be at least 10 characters');
       return;
     }
-    
+
     if (!formData.price || formData.price <= 0) {
       setError('Please enter a valid price');
       return;
     }
-    
+
     if (images.length === 0) {
       setError('Please upload at least one image');
       return;
@@ -88,11 +88,11 @@ export default function CreateListing() {
       data.append('condition', formData.condition);
       data.append('price', formData.price);
       data.append('listingType', formData.listingType);
-      
+
       if (formData.listingType === 'rent') {
         data.append('rentDuration', formData.rentDuration);
       }
-      
+
       images.forEach(image => {
         data.append('images', image);
       });
@@ -100,11 +100,17 @@ export default function CreateListing() {
       await api.post('/listings', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      
+
       navigate('/my-listings');
     } catch (err) {
       console.error('Error:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to create listing');
+      // Handle array of validation errors
+      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+        const errorMessages = err.response.data.errors.map(e => e.message).join('. ');
+        setError(errorMessages);
+      } else {
+        setError(err.response?.data?.message || err.message || 'Failed to create listing');
+      }
     } finally {
       setLoading(false);
     }
@@ -141,7 +147,7 @@ export default function CreateListing() {
               Images <span className="text-red-500">*</span>
               <span className="text-gray-500 font-normal"> (1-5 images, max 5MB each)</span>
             </label>
-            
+
             {/* Image Previews */}
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 mb-3">
               {imagePreviews.map((preview, idx) => (
@@ -158,7 +164,7 @@ export default function CreateListing() {
                   </button>
                 </div>
               ))}
-              
+
               {images.length < 5 && (
                 <label className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

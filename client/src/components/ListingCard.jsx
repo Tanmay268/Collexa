@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function ListingCard({ listing }) {
   const imageUrl = listing.images && listing.images.length > 0
     ? `${import.meta.env.VITE_API_URL}/api/uploads/${listing.images[0]}`
-    : 'https://via.placeholder.com/400x300?text=No+Image';
+    : '/placeholder.svg';
 
   return (
     <Link to={`/listing/${listing._id}`}>
@@ -14,7 +14,7 @@ export default function ListingCard({ listing }) {
             alt={listing.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+              e.target.src = '/placeholder.svg';
             }}
           />
           <div className="absolute top-2 right-2">
@@ -46,11 +46,10 @@ export default function ListingCard({ listing }) {
               {listing.category}
             </span>
             <span className="flex items-center">
-              <span className={`w-2 h-2 rounded-full mr-1 ${
-                listing.condition === 'New' ? 'bg-green-500' :
+              <span className={`w-2 h-2 rounded-full mr-1 ${listing.condition === 'New' ? 'bg-green-500' :
                 listing.condition === 'Like New' ? 'bg-blue-500' :
-                listing.condition === 'Good' ? 'bg-yellow-500' : 'bg-orange-500'
-              }`}></span>
+                  listing.condition === 'Good' ? 'bg-yellow-500' : 'bg-orange-500'
+                }`}></span>
               {listing.condition}
             </span>
           </div>
