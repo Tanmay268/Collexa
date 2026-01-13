@@ -1,5 +1,26 @@
 import User from '../models/User.js';
 
+export const getUserProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        year: user.year,
+        department: user.department,
+        profilePicture: user.profilePicture,
+        isVerified: user.isVerified
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateProfile = async (req, res, next) => {
   try {
     const { name, phone, year, department } = req.body;

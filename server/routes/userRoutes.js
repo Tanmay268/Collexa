@@ -1,11 +1,7 @@
 import express from 'express';
-import { updateProfile, changePassword } from '../controllers/userController.js';
+import { updateProfile, changePassword, getUserProfile } from '../controllers/userController.js';
 import auth from '../middleware/auth.js';
 import { uploadProfile } from '../config/cloudinary.js';
-import {
-    getUserProfile,
-    updateUserProfile,
-} from '../controllers/userController.js';
 
 const router = express.Router();
 
