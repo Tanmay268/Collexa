@@ -97,13 +97,14 @@ export default function CreateListing() {
         data.append('images', image);
       });
 
-      await api.post('/listings', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.post('/listings', data);
 
       navigate('/my-listings');
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Error creating listing:', err);
+      if (err.response?.data) {
+        console.error('Server Error Details:', JSON.stringify(err.response.data, null, 2));
+      }
       // Handle array of validation errors
       if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
         const errorMessages = err.response.data.errors.map(e => e.message).join('. ');
