@@ -55,7 +55,7 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// API Routes (these should come BEFORE the frontend routes)
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/listings', listingRoutes);
@@ -67,35 +67,57 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Collexa API is running' });
 });
 
+// Handle unknown API routes (must come after API routes but before frontend)
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API route not found: ${req.originalUrl}`
+  });
+});
+
 // ===============================
-// Serve React frontend (PRODUCTION)
+// Serve React frontend
 // ===============================
 if (process.env.NODE_ENV === 'production') {
+  // Production: serve built React app
   const publicPath = path.join(__dirname, 'public');
 
   app.use(express.static(publicPath));
 
-  // Explicit root handler
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(publicPath, 'index.html'));
-  });
-
-  // React Router fallback
+  // React Router fallback for production
   app.get('*', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
   });
+} else {
+  // Development: provide helpful message
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'Collexa API Server',
+      status: 'running',
+      environment: 'development',
+      endpoints: {
+        health: '/api/health',
+        auth: '/api/auth',
+        users: '/api/users',
+        listings: '/api/listings',
+        reports: '/api/reports',
+        admin: '/api/admin',
+      },
+      note: 'Frontend should be running on http://localhost:5173 (or your configured FRONTEND_URL)',
+    });
+  });
+
+  // Catch any other non-API routes in development
+  app.get('*', (req, res) => {
+    res.status(404).json({
+      success: false,
+      message: 'Route not found. This is the backend API server.',
+      frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+    });
+  });
 }
 
-
-// Handle unknown API routes
-app.use('/api', (req, res, next) => {
-  const error = new Error(`API route not found: ${req.originalUrl}`);
-  error.status = 404;
-  next(error);
-});
-
-
-// Error handler
+// Error handler (must be last)
 app.use(errorHandler);
 
 // Start cron jobs
@@ -105,4 +127,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`🎨 Frontend should be running on: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+    console.log(`💡 Backend API available at: http://localhost:${PORT}/api`);
+  }
 });

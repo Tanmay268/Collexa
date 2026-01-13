@@ -1,14 +1,26 @@
+version: '3.8'
+
 services:
   server:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: collexa-backend
     ports:
       - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/collexa
     env_file:
-      - server/.env
+      - ./server/.env
     depends_on:
       - mongo
-    restart: always
+    volumes:
+      - ./server/uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - collexa-network
 
   mongo:
     image: mongo:7
@@ -17,7 +29,15 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    restart: always
+    restart: unless-stopped
+    networks:
+      - collexa-network
+    environment:
+      - MONGO_INITDB_DATABASE=collexa
 
 volumes:
   mongo_data:
+
+networks:
+  collexa-network:
+    driver: bridge
