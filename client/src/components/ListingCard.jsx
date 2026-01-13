@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function ListingCard({ listing }) {
   const imageUrl = listing.images && listing.images.length > 0
-    ? `${import.meta.env.VITE_API_URL}/api/uploads/${listing.images[0]}`
+    ? `${import.meta.env.VITE_API_URL || ''}/api/uploads/${listing.images[0]}`
     : '/placeholder.svg';
 
   return (

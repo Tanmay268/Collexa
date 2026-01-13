@@ -66,7 +66,7 @@ export default function MyListings() {
         <div className="grid gap-4">
           {listings.map(listing => (
             <div key={listing._id} className="bg-white p-4 rounded-lg shadow flex gap-4">
-              <img src={listing.images?.[0] ? `${import.meta.env.VITE_API_URL}/api/uploads/${listing.images[0]}`
+              <img src={listing.images?.[0] ? `${import.meta.env.VITE_API_URL || ''}/api/uploads/${listing.images[0]}`
                 : '/placeholder.svg'} alt={listing.title} className="w-32 h-32 object-cover rounded" />
               <div className="flex-1">
                 <div className="flex justify-between">

@@ -72,7 +72,7 @@ export default function ListingDetails() {
     );
   }
 
-  const images = listing.images?.map(img => `${import.meta.env.VITE_API_URL}/api/uploads/${img}`
+  const images = listing.images?.map(img => `${import.meta.env.VITE_API_URL || ''}/api/uploads/${img}`
   ) || [];
 
   return (
@@ -180,9 +180,9 @@ export default function ListingDetails() {
                   {listing.category}
                 </span>
                 <span className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${listing.condition === 'New' ? 'bg-green-100 text-green-700' :
-                    listing.condition === 'Like New' ? 'bg-blue-100 text-blue-700' :
-                      listing.condition === 'Good' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-orange-100 text-orange-700'
+                  listing.condition === 'Like New' ? 'bg-blue-100 text-blue-700' :
+                    listing.condition === 'Good' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-orange-100 text-orange-700'
                   }`}>
                   {listing.condition}
                 </span>
