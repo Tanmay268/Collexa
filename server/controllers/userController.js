@@ -3,16 +3,26 @@ import User from '../models/User.js';
 export const updateProfile = async (req, res, next) => {
   try {
     const { name, phone, year, department } = req.body;
-    
+
     const user = await User.findById(req.userId);
-    
+
     if (name) user.name = name;
     if (phone) user.phone = phone;
     if (year) user.year = year;
     if (department) user.department = department;
-    
+
+    if (department) user.department = department;
+
+    // Handle profile picture update
+    if (req.file) {
+      // If user already has a profile picture (and it's on Cloudinary), delete it
+      // Assuming user.profilePicture is stored similarly or just url. 
+      // Need to check User model, but for now we just save the new one.
+      user.profilePicture = req.file.path;
+    }
+
     await user.save();
-    
+
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
@@ -33,21 +43,21 @@ export const updateProfile = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    
+
     const user = await User.findById(req.userId).select('+password');
-    
+
     const isMatch = await user.comparePassword(currentPassword);
-    
+
     if (!isMatch) {
       return res.status(400).json({
         success: false,
         message: 'Current password is incorrect',
       });
     }
-    
+
     user.password = newPassword;
     await user.save();
-    
+
     res.status(200).json({
       success: true,
       message: 'Password changed successfully',

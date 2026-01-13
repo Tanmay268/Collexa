@@ -64,8 +64,8 @@ const listingSchema = new mongoose.Schema({
   },
 
   images: [{
-    type: String,
-    required: true,
+    url: { type: String, required: true },
+    publicId: { type: String, required: true }
   }],
 
   status: {
