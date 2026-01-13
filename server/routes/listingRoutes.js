@@ -16,14 +16,15 @@ import { createListingLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
 
+// Protected routes (Move my-listings here to ensure it's evaluated before generic :id)
+router.use('/my-listings', auth, getMyListings);
+
 // Public routes
 router.get('/', getAllListings);
 router.get('/:id', mongoIdValidation, validate, getListingById);
 
-// Protected routes
-router.use(auth); // Apply auth middleware to all subsequent routes
-
-router.get('/my-listings/all', getMyListings); // Changed path to avoid conflict with /:id if not careful, but /my-listings is specific enough
+// Other protected routes
+router.use(auth);
 
 router.post(
   '/',

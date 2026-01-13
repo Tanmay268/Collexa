@@ -142,7 +142,7 @@ export const updateListing = async (req, res, next) => {
       });
     }
 
-    if (listing.seller.toString() !== req.userId.toString() && !req.isAdmin) {
+    if (!listing.seller || (listing.seller.toString() !== req.userId.toString() && !req.isAdmin)) {
       return res.status(403).json({
         success: false,
         message: 'You can only edit your own listings',
@@ -194,7 +194,7 @@ export const deleteListing = async (req, res, next) => {
       });
     }
 
-    if (listing.seller.toString() !== req.userId.toString() && !req.isAdmin) {
+    if (!listing.seller || (listing.seller.toString() !== req.userId.toString() && !req.isAdmin)) {
       return res.status(403).json({
         success: false,
         message: 'You can only delete your own listings',
@@ -231,7 +231,7 @@ export const reactivateListing = async (req, res, next) => {
       });
     }
 
-    if (listing.seller.toString() !== req.userId.toString()) {
+    if (!listing.seller || listing.seller.toString() !== req.userId.toString()) {
       return res.status(403).json({
         success: false,
         message: 'You can only reactivate your own listings',
