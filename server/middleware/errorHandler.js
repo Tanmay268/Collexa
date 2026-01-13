@@ -1,6 +1,6 @@
 const errorHandler = (err, req, res, next) => {
   console.error('Error:', err);
-  
+
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map(e => e.message);
     return res.status(400).json({
@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
       errors,
     });
   }
-  
+
   if (err.code === 11000) {
     const field = Object.keys(err.keyPattern)[0];
     return res.status(409).json({
@@ -17,21 +17,21 @@ const errorHandler = (err, req, res, next) => {
       message: `${field} already exists`,
     });
   }
-  
+
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
       message: 'Invalid token',
     });
   }
-  
+
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
       success: false,
       message: 'Token expired',
     });
   }
-  
+
   if (err.name === 'MulterError') {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
@@ -44,10 +44,12 @@ const errorHandler = (err, req, res, next) => {
       message: err.message,
     });
   }
-  
+
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err : {},
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 };
 
