@@ -17,8 +17,13 @@ export default function ListingDetails() {
 
   const fetchListing = async () => {
     try {
-      const data = await api.get(`/listings/${id}`);
-      setListing(data.listing);
+      const data = await api.get(`/listings/${id}`); // Note: /listings (plural)
+
+      // FIX: Check response structure
+      console.log('API Response:', data);
+
+      // Your backend returns { success: true, listing: {...} }
+      setListing(data.listing); // Use data.listing, not data.data
     } catch (error) {
       console.error('Error:', error);
     } finally {

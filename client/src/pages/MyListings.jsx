@@ -30,7 +30,11 @@ export default function MyListings() {
         url += `?status=${filter}`;
       }
       const data = await api.get(url);
-      setListings(data.listings || []);
+
+      // FIX: Check what your backend returns
+      console.log('My Listings Response:', data);
+
+      setListings(data.listings || []); // Already correct!
     } catch (error) {
       console.error('Error:', error);
     } finally {

@@ -30,7 +30,9 @@ export default function Home() {
       if (filters.search) params.search = filters.search;
 
       const data = await api.get('/listings', { params });
-      setListings(data.listings || []);
+
+      // FIX: Your backend returns { success: true, listings: [...] }
+      setListings(data.listings || []); // Already correct!
     } catch (error) {
       console.error('Error fetching listings:', error);
     } finally {
