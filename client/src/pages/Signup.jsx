@@ -88,9 +88,7 @@ export default function Signup() {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="mb-5 text-center sm:mb-8">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg sm:mb-4 sm:h-20 sm:w-20">
-            <span className="text-white font-bold text-3xl sm:text-4xl">C</span>
-          </div>
+          <img src="/logo.svg" alt="Collexa logo" className="mx-auto mb-3 h-14 w-auto sm:mb-4 sm:h-20" />
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Create Account</h2>
           <p className="mt-2 text-sm sm:text-base text-gray-600">Join the VIT Collexa community</p>
         </div>
@@ -209,7 +207,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
+            className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2 whitespace-nowrap">
@@ -241,7 +239,7 @@ export default function Signup() {
             </div>
           )}
 
-          <div className="text-center text-sm">
+          <div className="pt-2 text-center text-sm sm:pt-1">
             <span className="text-gray-600">Already have an account? </span>
             <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
               Login

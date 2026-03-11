@@ -7,29 +7,31 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md">
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-3">
+        <div className="relative flex h-16 items-center justify-between gap-3">
           <div className="flex items-center">
-            <Link to="/" className="text-xl font-bold text-blue-600 sm:text-2xl">
-              Collexa
+            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-blue-600 sm:text-2xl">
+              <span>Collexa</span>
             </Link>
             <span className="ml-2 hidden text-sm text-gray-500 sm:inline">VIT Marketplace</span>
           </div>
+
 
           <div className="flex items-center gap-2 sm:gap-4">
             {isAuthenticated ? (
               <>
                 <Link
                   to="/create-listing"
-                  className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:px-4"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-base font-medium text-white transition hover:bg-blue-700 sm:h-auto sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
                 >
-                  <span className="sm:hidden">Sell</span>
+                  <span className="sm:hidden">+</span>
                   <span className="hidden sm:inline">+ Create Listing</span>
                 </Link>
                 <Link
                   to="/my-listings"
-                  className="hidden text-gray-700 transition hover:text-blue-600 sm:inline"
+                  className="inline-flex min-h-[44px] items-center justify-center text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
                 >
-                  My Listings
+                  <span className="sm:hidden">List</span>
+                  <span className="hidden sm:inline">My Listings</span>
                 </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
@@ -64,7 +66,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="text-sm text-gray-700 transition hover:text-blue-600 sm:text-base"
+                  className="inline-flex min-h-[44px] items-center justify-center text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
                 >
                   Login
                 </Link>
