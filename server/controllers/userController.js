@@ -1,20 +1,25 @@
-import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import { getUserById, updateUser } from '../services/dataService.js';
+
+const buildProfileUser = (user) => ({
+  id: user._id,
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone || null,
+  year: user.year || null,
+  department: user.department || null,
+  profilePicture: user.profilePicture || null,
+  isVerified: user.isVerified,
+});
 
 export const getUserProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await getUserById(req.userId);
+
     res.status(200).json({
       success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        year: user.year,
-        department: user.department,
-        profilePicture: user.profilePicture,
-        isVerified: user.isVerified
-      }
+      user: buildProfileUser(user),
     });
   } catch (error) {
     next(error);
@@ -24,37 +29,18 @@ export const getUserProfile = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
   try {
     const { name, phone, year, department } = req.body;
-
-    const user = await User.findById(req.userId);
-
-    if (name) user.name = name;
-    if (phone) user.phone = phone;
-    if (year) user.year = year;
-    if (department) user.department = department;
-
-    if (department) user.department = department;
-
-    // Handle profile picture update
-    if (req.file) {
-      // If user already has a profile picture (and it's on Cloudinary), delete it
-      // Assuming user.profilePicture is stored similarly or just url. 
-      // Need to check User model, but for now we just save the new one.
-      user.profilePicture = req.file.path;
-    }
-
-    await user.save();
+    const user = await updateUser(req.userId, {
+      name,
+      phone,
+      year,
+      department,
+      profilePicture: req.file ? req.file.path : undefined,
+    });
 
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        year: user.year,
-        department: user.department,
-      },
+      user: buildProfileUser(user),
     });
   } catch (error) {
     next(error);
@@ -64,11 +50,9 @@ export const updateProfile = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    const user = await getUserById(req.userId);
 
-    const user = await User.findById(req.userId).select('+password');
-
-    const isMatch = await user.comparePassword(currentPassword);
-
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash || '');
     if (!isMatch) {
       return res.status(400).json({
         success: false,
@@ -76,8 +60,8 @@ export const changePassword = async (req, res, next) => {
       });
     }
 
-    user.password = newPassword;
-    await user.save();
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await updateUser(req.userId, { passwordHash });
 
     res.status(200).json({
       success: true,

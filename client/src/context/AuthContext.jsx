@@ -41,11 +41,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (userData) => {
-    const data = await api.post('/auth/signup', userData);
+    return api.post('/auth/signup', userData);
+  };
+
+  const verifySignupOtp = async (payload) => {
+    const data = await api.post('/auth/verify-otp', payload);
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setUser(data.user);
     return data;
+  };
+
+  const resendSignupOtp = async (email) => {
+    return api.post('/auth/resend-otp', { email });
   };
 
   const logout = () => {
@@ -57,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, loading, login, signup, logout,
+      user, loading, login, signup, verifySignupOtp, resendSignupOtp, logout,
       isAuthenticated: !!user,
       isAdmin: user?.isAdmin || false
     }}>

@@ -98,8 +98,9 @@ export const listingValidation = [
 
 export const reportValidation = [
   body('listingId')
-    .isMongoId()
-    .withMessage('Invalid listing ID'),
+    .trim()
+    .notEmpty()
+    .withMessage('Listing ID is required'),
   
   body('reason')
     .isIn(['Fake Listing', 'Inappropriate Content', 'Spam', 'Incorrect Price', 'Already Sold', 'Other'])
@@ -112,9 +113,10 @@ export const reportValidation = [
     .withMessage('Description cannot exceed 500 characters'),
 ];
 
-export const mongoIdValidation = [
+export const idValidation = [
   param('id')
-    .isMongoId()
+    .trim()
+    .notEmpty()
     .withMessage('Invalid ID format'),
 ];
 

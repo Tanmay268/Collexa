@@ -1,27 +1,16 @@
 import cron from 'node-cron';
-import Listing from '../models/Listing.js';
+import { syncExpiredListings } from '../services/dataService.js';
 
 const expireListingsJob = cron.schedule('0 2 * * *', async () => {
   try {
-    console.log('🕐 Running expire listings cron job...');
-    
-    const result = await Listing.updateMany(
-      {
-        status: 'active',
-        expiresAt: { $lt: new Date() },
-      },
-      {
-        $set: { status: 'expired' },
-      }
-    );
-    
-    console.log(`✅ Expired ${result.modifiedCount} listings`);
+    await syncExpiredListings();
+    console.log('Expired listing sync complete');
   } catch (error) {
-    console.error('❌ Cron job error:', error);
+    console.error('Cron job error:', error);
   }
 });
 
 export const startCronJobs = () => {
   expireListingsJob.start();
-  console.log('✅ Cron jobs started');
+  console.log('Cron jobs started');
 };

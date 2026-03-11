@@ -1,33 +1,88 @@
-import Listing from '../models/Listing.js';
 import { deleteImage } from '../config/cloudinary.js';
+import {
+  createListingRecord,
+  getListingById as getListingRecordById,
+  getUserById,
+  incrementListingViewCount,
+  paginate,
+  syncExpiredListings,
+  updateListingRecord,
+} from '../services/dataService.js';
+
+const withSeller = async (listing, includePrivateSellerFields = false) => {
+  const seller = await getUserById(listing.sellerId);
+  if (!seller) return { ...listing, seller: null };
+
+  return {
+    ...listing,
+    seller: includePrivateSellerFields
+      ? {
+          _id: seller._id,
+          id: seller._id,
+          name: seller.name,
+          email: seller.email,
+          phone: seller.phone || null,
+          year: seller.year || null,
+          department: seller.department || null,
+          isVerified: seller.isVerified,
+        }
+      : {
+          _id: seller._id,
+          id: seller._id,
+          name: seller.name,
+          isVerified: seller.isVerified,
+        },
+  };
+};
+
+const filterListings = (listings, query) => {
+  const { category, minPrice, maxPrice, listingType, search, sellerId, status } = query;
+  const normalizedSearch = search ? search.toLowerCase() : null;
+
+  return listings.filter((listing) => {
+    if (sellerId && listing.sellerId !== sellerId) return false;
+    if (status === 'active' && listing.status !== 'active') return false;
+    if (status && status !== 'all' && status !== 'active' && listing.status !== status) return false;
+    if (!status && listing.status !== 'active') return false;
+    if (category && listing.category !== category) return false;
+    if (listingType && listing.listingType !== listingType) return false;
+    if (minPrice !== undefined && Number(listing.price) < Number(minPrice)) return false;
+    if (maxPrice !== undefined && Number(listing.price) > Number(maxPrice)) return false;
+    if (
+      normalizedSearch &&
+      !`${listing.title} ${listing.description}`.toLowerCase().includes(normalizedSearch)
+    ) {
+      return false;
+    }
+    return true;
+  });
+};
 
 export const createListing = async (req, res, next) => {
   try {
     const { title, description, category, condition, price, listingType, rentDuration } = req.body;
 
-    const images = req.files.map(file => ({
+    const images = req.files.map((file) => ({
       url: file.path,
-      publicId: file.filename
+      publicId: file.filename,
     }));
 
-    const listing = await Listing.create({
-      seller: req.userId,
+    const listing = await createListingRecord({
+      sellerId: req.userId,
       title,
       description,
       category,
       condition,
-      price,
+      price: Number(price),
       listingType,
       rentDuration: listingType === 'rent' ? rentDuration : null,
       images,
     });
 
-    await listing.populate('seller', 'name isVerified');
-
     res.status(201).json({
       success: true,
       message: 'Listing created successfully',
-      listing,
+      listing: await withSeller(listing),
     });
   } catch (error) {
     next(error);
@@ -36,40 +91,16 @@ export const createListing = async (req, res, next) => {
 
 export const getAllListings = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, category, minPrice, maxPrice, listingType, search } = req.query;
-
-    const query = { status: 'active' };
-
-    if (category) query.category = category;
-    if (listingType) query.listingType = listingType;
-
-    if (minPrice !== undefined || maxPrice !== undefined) {
-      query.price = {};
-      if (minPrice !== undefined) query.price.$gte = Number(minPrice);
-      if (maxPrice !== undefined) query.price.$lte = Number(maxPrice);
-    }
-
-    if (search) {
-      const sanitizedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query.$or = [
-        { title: { $regex: sanitizedSearch, $options: 'i' } },
-        { description: { $regex: sanitizedSearch, $options: 'i' } },
-      ];
-    }
-
-    const listings = await Listing.find(query)
-      .populate('seller', 'name isVerified')
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
-
-    const count = await Listing.countDocuments(query);
+    const syncedListings = await syncExpiredListings();
+    const filteredListings = filterListings(syncedListings, { ...req.query, status: 'active' });
+    const page = paginate(filteredListings, req.query.page, req.query.limit);
+    const listings = await Promise.all(page.items.map((listing) => withSeller(listing)));
 
     res.status(200).json({
       success: true,
-      count,
-      totalPages: Math.ceil(count / limit),
-      currentPage: Number(page),
+      count: page.total,
+      totalPages: page.totalPages,
+      currentPage: page.currentPage,
       listings,
     });
   } catch (error) {
@@ -79,27 +110,40 @@ export const getAllListings = async (req, res, next) => {
 
 export const getListingById = async (req, res, next) => {
   try {
-    const listing = await Listing.findById(req.params.id)
-      .populate('seller', 'name email phone year department isVerified');
+    let listing = await getListingRecordById(req.params.id);
 
-    if (!listing || listing.status !== 'active') {
+    if (!listing) {
       return res.status(404).json({
         success: false,
         message: 'Listing not found',
       });
     }
 
-    if (listing.seller._id.toString() !== req.userId.toString()) {
-      listing.viewCount += 1;
-      await listing.save();
+    if (listing.status === 'active' && new Date(listing.expiresAt) < new Date()) {
+      listing = await updateListingRecord(listing._id, { status: 'expired' });
     }
 
-    const daysRemaining = Math.ceil((listing.expiresAt - new Date()) / (1000 * 60 * 60 * 24));
+    if (listing.status !== 'active') {
+      return res.status(404).json({
+        success: false,
+        message: 'Listing not found',
+      });
+    }
+
+    if (!req.userId || listing.sellerId !== req.userId) {
+      await incrementListingViewCount(listing._id);
+      listing.viewCount += 1;
+    }
+
+    const daysRemaining = Math.max(
+      0,
+      Math.ceil((new Date(listing.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))
+    );
 
     res.status(200).json({
       success: true,
       listing: {
-        ...listing.toObject(),
+        ...(await withSeller(listing, true)),
         daysRemaining,
       },
     });
@@ -110,21 +154,16 @@ export const getListingById = async (req, res, next) => {
 
 export const getMyListings = async (req, res, next) => {
   try {
-    const { status } = req.query;
-
-    const query = { seller: req.userId };
-    if (status && status !== 'all') {
-      query.status = status;
-    } else {
-      query.status = { $ne: 'deleted' };
-    }
-
-    const listings = await Listing.find(query).sort({ createdAt: -1 });
+    const syncedListings = await syncExpiredListings();
+    const filteredListings = filterListings(syncedListings, {
+      sellerId: req.userId,
+      status: req.query.status || 'all',
+    }).filter((listing) => listing.status !== 'deleted' || req.query.status === 'deleted');
 
     res.status(200).json({
       success: true,
-      count: listings.length,
-      listings,
+      count: filteredListings.length,
+      listings: filteredListings,
     });
   } catch (error) {
     next(error);
@@ -133,7 +172,7 @@ export const getMyListings = async (req, res, next) => {
 
 export const updateListing = async (req, res, next) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await getListingRecordById(req.params.id);
 
     if (!listing) {
       return res.status(404).json({
@@ -142,7 +181,7 @@ export const updateListing = async (req, res, next) => {
       });
     }
 
-    if (!listing.seller || (listing.seller.toString() !== req.userId.toString() && !req.isAdmin)) {
+    if (listing.sellerId !== req.userId && !req.isAdmin) {
       return res.status(403).json({
         success: false,
         message: 'You can only edit your own listings',
@@ -150,33 +189,34 @@ export const updateListing = async (req, res, next) => {
     }
 
     const { title, description, price, condition } = req.body;
-
-    if (title) listing.title = title;
-    if (description) listing.description = description;
-    if (price) listing.price = price;
-    if (condition) listing.condition = condition;
+    const nextPayload = {
+      title,
+      description,
+      price: price !== undefined ? Number(price) : undefined,
+      condition,
+    };
 
     if (req.files && req.files.length > 0) {
-      // Delete old images from Cloudinary
-      if (listing.images && listing.images.length > 0) {
-        // Import deleteImage helper dynamically or ensure it's imported at top
-        // For now, assuming we handle cleanup. 
-        // Ideally we should import { deleteImage } from '../config/cloudinary.js'
+      if (listing.images?.length) {
+        await Promise.all(
+          listing.images
+            .filter((image) => image.publicId)
+            .map((image) => deleteImage(image.publicId))
+        );
       }
 
-      const newImages = req.files.map(file => ({
+      nextPayload.images = req.files.map((file) => ({
         url: file.path,
-        publicId: file.filename
+        publicId: file.filename,
       }));
-      listing.images = newImages;
     }
 
-    await listing.save();
+    const updatedListing = await updateListingRecord(listing._id, nextPayload);
 
     res.status(200).json({
       success: true,
       message: 'Listing updated successfully',
-      listing,
+      listing: updatedListing,
     });
   } catch (error) {
     next(error);
@@ -185,7 +225,7 @@ export const updateListing = async (req, res, next) => {
 
 export const deleteListing = async (req, res, next) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await getListingRecordById(req.params.id);
 
     if (!listing) {
       return res.status(404).json({
@@ -194,22 +234,20 @@ export const deleteListing = async (req, res, next) => {
       });
     }
 
-    if (!listing.seller || (listing.seller.toString() !== req.userId.toString() && !req.isAdmin)) {
+    if (listing.sellerId !== req.userId && !req.isAdmin) {
       return res.status(403).json({
         success: false,
         message: 'You can only delete your own listings',
       });
     }
 
-    // Delete images from Cloudinary
-    for (const image of listing.images) {
-      if (image.publicId) {
-        await deleteImage(image.publicId);
-      }
-    }
+    await Promise.all(
+      (listing.images || [])
+        .filter((image) => image.publicId)
+        .map((image) => deleteImage(image.publicId))
+    );
 
-    listing.status = 'deleted';
-    await listing.save();
+    await updateListingRecord(listing._id, { status: 'deleted' });
 
     res.status(200).json({
       success: true,
@@ -222,7 +260,7 @@ export const deleteListing = async (req, res, next) => {
 
 export const reactivateListing = async (req, res, next) => {
   try {
-    const listing = await Listing.findById(req.params.id);
+    const listing = await getListingRecordById(req.params.id);
 
     if (!listing) {
       return res.status(404).json({
@@ -231,7 +269,7 @@ export const reactivateListing = async (req, res, next) => {
       });
     }
 
-    if (!listing.seller || listing.seller.toString() !== req.userId.toString()) {
+    if (listing.sellerId !== req.userId) {
       return res.status(403).json({
         success: false,
         message: 'You can only reactivate your own listings',
@@ -245,17 +283,15 @@ export const reactivateListing = async (req, res, next) => {
       });
     }
 
-    listing.status = 'active';
-    const newExpiryDate = new Date();
-    newExpiryDate.setDate(newExpiryDate.getDate() + 30);
-    listing.expiresAt = newExpiryDate;
-
-    await listing.save();
+    const reactivatedListing = await updateListingRecord(listing._id, {
+      status: 'active',
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
 
     res.status(200).json({
       success: true,
       message: 'Listing reactivated for 30 days',
-      listing,
+      listing: reactivatedListing,
     });
   } catch (error) {
     next(error);

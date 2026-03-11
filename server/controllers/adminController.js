@@ -1,24 +1,25 @@
-import User from '../models/User.js';
-import Listing from '../models/Listing.js';
-import Report from '../models/Report.js';
+import {
+  getListingById,
+  getReportById,
+  getUserById,
+  listReports,
+  listUsers,
+  paginate,
+  syncExpiredListings,
+  updateListingRecord,
+  updateReportRecord,
+} from '../services/dataService.js';
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 50 } = req.query;
-    
-    const users = await User.find()
-      .select('-password')
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
-    
-    const count = await User.countDocuments();
-    
+    const users = (await listUsers()).map(({ passwordHash, ...user }) => user);
+    const page = paginate(users, req.query.page, req.query.limit || 50);
+
     res.status(200).json({
       success: true,
-      count,
-      totalPages: Math.ceil(count / limit),
-      users,
+      count: page.total,
+      totalPages: page.totalPages,
+      users: page.items,
     });
   } catch (error) {
     next(error);
@@ -27,21 +28,31 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getAllListingsAdmin = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 50 } = req.query;
-    
-    const query = status && status !== 'all' ? { status } : {};
-    
-    const listings = await Listing.find(query)
-      .populate('seller', 'name email')
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
-    
-    const count = await Listing.countDocuments(query);
-    
+    const allListings = await syncExpiredListings();
+    const filteredListings = allListings.filter((listing) =>
+      req.query.status && req.query.status !== 'all' ? listing.status === req.query.status : true
+    );
+    const page = paginate(filteredListings, req.query.page, req.query.limit || 50);
+    const listings = await Promise.all(
+      page.items.map(async (listing) => {
+        const seller = await getUserById(listing.sellerId);
+        return {
+          ...listing,
+          seller: seller
+            ? {
+                _id: seller._id,
+                id: seller._id,
+                name: seller.name,
+                email: seller.email,
+              }
+            : null,
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
-      count,
+      count: page.total,
       listings,
     });
   } catch (error) {
@@ -51,24 +62,52 @@ export const getAllListingsAdmin = async (req, res, next) => {
 
 export const getAllReports = async (req, res, next) => {
   try {
-    const { status, page = 1, limit = 50 } = req.query;
-    
-    const query = status && status !== 'all' ? { status } : {};
-    
-    const reports = await Report.find(query)
-      .populate('listing', 'title seller')
-      .populate('reportedBy', 'name email')
-      .populate('listing.seller', 'name email')
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
-    
-    const count = await Report.countDocuments(query);
-    
+    const reports = await listReports();
+    const filteredReports = reports.filter((report) =>
+      req.query.status && req.query.status !== 'all' ? report.status === req.query.status : true
+    );
+    const page = paginate(filteredReports, req.query.page, req.query.limit || 50);
+    const hydratedReports = await Promise.all(
+      page.items.map(async (report) => {
+        const [listing, reportedBy] = await Promise.all([
+          getListingById(report.listingId),
+          getUserById(report.reportedBy),
+        ]);
+        const listingSeller = listing ? await getUserById(listing.sellerId) : null;
+
+        return {
+          ...report,
+          listing: listing
+            ? {
+                _id: listing._id,
+                id: listing._id,
+                title: listing.title,
+                seller: listingSeller
+                  ? {
+                      _id: listingSeller._id,
+                      id: listingSeller._id,
+                      name: listingSeller.name,
+                      email: listingSeller.email,
+                    }
+                  : null,
+              }
+            : null,
+          reportedBy: reportedBy
+            ? {
+                _id: reportedBy._id,
+                id: reportedBy._id,
+                name: reportedBy.name,
+                email: reportedBy.email,
+              }
+            : null,
+        };
+      })
+    );
+
     res.status(200).json({
       success: true,
-      count,
-      reports,
+      count: page.total,
+      reports: hydratedReports,
     });
   } catch (error) {
     next(error);
@@ -78,31 +117,30 @@ export const getAllReports = async (req, res, next) => {
 export const reviewReport = async (req, res, next) => {
   try {
     const { action, reviewNote, deleteListingIfActionTaken } = req.body;
-    
-    const report = await Report.findById(req.params.id);
-    
+    const report = await getReportById(req.params.id);
+
     if (!report) {
       return res.status(404).json({
         success: false,
         message: 'Report not found',
       });
     }
-    
-    report.status = action;
-    report.reviewedBy = req.userId;
-    report.reviewNote = reviewNote || '';
-    report.reviewedAt = new Date();
-    
-    await report.save();
-    
+
+    const reviewedReport = await updateReportRecord(report._id, {
+      status: action,
+      reviewedBy: req.userId,
+      reviewNote: reviewNote || '',
+      reviewedAt: new Date(),
+    });
+
     if (action === 'action_taken' && deleteListingIfActionTaken) {
-      await Listing.findByIdAndUpdate(report.listing, { status: 'deleted' });
+      await updateListingRecord(report.listingId, { status: 'deleted' });
     }
-    
+
     res.status(200).json({
       success: true,
       message: 'Report reviewed successfully',
-      report,
+      report: reviewedReport,
     });
   } catch (error) {
     next(error);
@@ -111,38 +149,32 @@ export const reviewReport = async (req, res, next) => {
 
 export const getDashboardStats = async (req, res, next) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const verifiedUsers = await User.countDocuments({ isVerified: true });
-    const totalListings = await Listing.countDocuments();
-    const activeListings = await Listing.countDocuments({ status: 'active' });
-    const expiredListings = await Listing.countDocuments({ status: 'expired' });
-    const deletedListings = await Listing.countDocuments({ status: 'deleted' });
-    const pendingReports = await Report.countDocuments({ status: 'pending' });
-    const totalReports = await Report.countDocuments();
-    
-    const listingsByCategory = await Listing.aggregate([
-      { $match: { status: 'active' } },
-      { $group: { _id: '$category', count: { $sum: 1 } } },
+    const [users, listings, reports] = await Promise.all([
+      listUsers(),
+      syncExpiredListings(),
+      listReports(),
     ]);
-    
-    const categoryMap = {};
-    listingsByCategory.forEach(item => {
-      categoryMap[item._id] = item.count;
-    });
-    
+
+    const stats = {
+      totalUsers: users.length,
+      verifiedUsers: users.filter((user) => user.isVerified).length,
+      totalListings: listings.length,
+      activeListings: listings.filter((listing) => listing.status === 'active').length,
+      expiredListings: listings.filter((listing) => listing.status === 'expired').length,
+      deletedListings: listings.filter((listing) => listing.status === 'deleted').length,
+      pendingReports: reports.filter((report) => report.status === 'pending').length,
+      totalReports: reports.length,
+      listingsByCategory: listings
+        .filter((listing) => listing.status === 'active')
+        .reduce((acc, listing) => {
+          acc[listing.category] = (acc[listing.category] || 0) + 1;
+          return acc;
+        }, {}),
+    };
+
     res.status(200).json({
       success: true,
-      stats: {
-        totalUsers,
-        verifiedUsers,
-        totalListings,
-        activeListings,
-        expiredListings,
-        deletedListings,
-        pendingReports,
-        totalReports,
-        listingsByCategory: categoryMap,
-      },
+      stats,
     });
   } catch (error) {
     next(error);

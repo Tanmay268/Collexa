@@ -11,7 +11,7 @@ import {
 import auth from '../middleware/auth.js';
 import { uploadListing } from '../config/cloudinary.js';
 import { validateImageFiles } from '../middleware/upload.js';
-import { listingValidation, mongoIdValidation, validate } from '../middleware/validation.js';
+import { listingValidation, idValidation, validate } from '../middleware/validation.js';
 import { createListingLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
@@ -25,7 +25,7 @@ router.get('/', getAllListings);
 router.get('/my-listings', auth, getMyListings);
 
 // Dynamic public route - Must be AFTER specific routes
-router.get('/:id', mongoIdValidation, validate, getListingById);
+router.get('/:id', idValidation, validate, getListingById);
 
 // Other protected routes
 router.post(
@@ -42,14 +42,13 @@ router.post(
 router.put(
   '/:id',
   auth,
-  mongoIdValidation,
+  idValidation,
   validate,
   uploadListing.array('images', 5),
   updateListing,
-  validateImageFiles,
 );
 
-router.delete('/:id', auth, mongoIdValidation, validate, deleteListing);
-router.post('/:id/reactivate', auth, mongoIdValidation, validate, reactivateListing);
+router.delete('/:id', auth, idValidation, validate, deleteListing);
+router.post('/:id/reactivate', auth, idValidation, validate, reactivateListing);
 
 export default router;
