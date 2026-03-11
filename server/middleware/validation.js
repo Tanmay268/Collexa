@@ -163,6 +163,28 @@ export const bugReportValidation = [
     .withMessage('Device info cannot exceed 300 characters'),
 ];
 
+export const accountReportValidation = [
+  body('reportedUserId')
+    .trim()
+    .notEmpty()
+    .withMessage('Reported user is required'),
+  body('reason')
+    .isIn(['Fake Account', 'Harassment', 'Spam', 'Fraud', 'Inappropriate Behaviour', 'Other'])
+    .withMessage('Invalid report reason'),
+  body('details')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage('Details cannot exceed 1000 characters'),
+];
+
+export const contactRequestValidation = [
+  body('listingId')
+    .trim()
+    .notEmpty()
+    .withMessage('Listing is required'),
+];
+
 export const idValidation = [
   param('id')
     .trim()

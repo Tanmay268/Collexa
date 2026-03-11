@@ -5,6 +5,7 @@ const userEmailsCollection = db.collection('userEmails');
 const listingsCollection = db.collection('listings');
 const reportsCollection = db.collection('reports');
 const otpsCollection = db.collection('otps');
+const blockedEmailsCollection = db.collection('blockedEmails');
 
 const isTimestamp = (value) =>
   value &&
@@ -52,6 +53,7 @@ export const getCollectionRefs = () => ({
   listingsCollection,
   reportsCollection,
   otpsCollection,
+  blockedEmailsCollection,
 });
 
 export const now = () => new Date();
@@ -106,6 +108,33 @@ export const getUserByEmail = async (email) => {
   const normalizedEmail = email.toLowerCase().trim();
   const snapshot = await usersCollection.where('email', '==', normalizedEmail).limit(1).get();
   return snapshot.empty ? null : docToObject(snapshot.docs[0]);
+};
+
+export const isEmailBlocked = async (email) => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const doc = await blockedEmailsCollection.doc(normalizedEmail).get();
+  return doc.exists;
+};
+
+export const blockEmailAddress = async (email, meta = {}) => {
+  const normalizedEmail = email.toLowerCase().trim();
+  await blockedEmailsCollection.doc(normalizedEmail).set({
+    email: normalizedEmail,
+    blockedAt: now(),
+    ...stripUndefined(meta),
+  });
+};
+
+export const unblockEmailAddress = async (email) => {
+  const normalizedEmail = email.toLowerCase().trim();
+  await blockedEmailsCollection.doc(normalizedEmail).delete();
+};
+
+export const listBlockedEmails = async () => {
+  const snapshot = await blockedEmailsCollection.get();
+  return snapshot.docs
+    .map(docToObject)
+    .sort((a, b) => new Date(b.blockedAt) - new Date(a.blockedAt));
 };
 
 export const updateUser = async (userId, data) => {

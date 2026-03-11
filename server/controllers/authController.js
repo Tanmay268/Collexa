@@ -3,11 +3,13 @@ import jwt from 'jsonwebtoken';
 import generateOTP from '../utils/generateOTP.js';
 import { sendOTPEmail, sendPasswordResetOTPEmail } from '../utils/sendEmail.js';
 import {
+  blockEmailAddress,
   createUser,
   deleteOTP,
   getOTP,
   getUserByEmail,
   getUserById,
+  isEmailBlocked,
   saveOTP,
   updateUser,
 } from '../services/dataService.js';
@@ -35,6 +37,13 @@ const signToken = (user) =>
 export const signup = async (req, res, next) => {
   try {
     const { email } = req.body;
+
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
 
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
@@ -68,6 +77,13 @@ export const signup = async (req, res, next) => {
 export const verifyOTP = async (req, res, next) => {
   try {
     const { email, otp, name, password, phone } = req.body;
+
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
 
     const otpRecord = await getOTP(email, otp);
     if (!otpRecord) {
@@ -117,6 +133,13 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
+
     const user = await getUserByEmail(email);
     const isMatch = user ? await bcrypt.compare(password, user.passwordHash || '') : false;
 
@@ -164,6 +187,13 @@ export const resendOTP = async (req, res, next) => {
   try {
     const { email } = req.body;
 
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
+
     const otp = generateOTP();
     await saveOTP(email, otp);
     await sendOTPEmail(email, otp);
@@ -180,6 +210,13 @@ export const resendOTP = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
 
     const user = await getUserByEmail(email);
     if (!user) {
@@ -212,6 +249,13 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
   try {
     const { email, otp, newPassword } = req.body;
+
+    if (await isEmailBlocked(email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This email has been blocked from using Collexa.',
+      });
+    }
 
     const user = await getUserByEmail(email);
     if (!user) {

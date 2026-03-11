@@ -1,11 +1,14 @@
 import {
+  blockEmailAddress,
   getListingById,
   getReportById,
   getUserById,
+  listBlockedEmails,
   listReports,
   listUsers,
   paginate,
   syncExpiredListings,
+  unblockEmailAddress,
   updateListingRecord,
   updateReportRecord,
 } from '../services/dataService.js';
@@ -175,6 +178,65 @@ export const getDashboardStats = async (req, res, next) => {
     res.status(200).json({
       success: true,
       stats,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const blockUser = async (req, res, next) => {
+  try {
+    const user = await getUserById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    await blockEmailAddress(user.email, {
+      blockedBy: req.userId,
+      reason: req.body.reason || 'Blocked by admin',
+      userId: user._id,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'User email blocked successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unblockUser = async (req, res, next) => {
+  try {
+    const user = await getUserById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    await unblockEmailAddress(user.email);
+
+    res.status(200).json({
+      success: true,
+      message: 'User email unblocked successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getBlockedEmails = async (req, res, next) => {
+  try {
+    const blockedEmails = await listBlockedEmails();
+    res.status(200).json({
+      success: true,
+      count: blockedEmails.length,
+      blockedEmails,
     });
   } catch (error) {
     next(error);

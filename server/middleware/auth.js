@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { getUserById } from '../services/dataService.js';
+import { getUserById, isEmailBlocked } from '../services/dataService.js';
 
 const auth = async (req, res, next) => {
   try {
@@ -20,6 +20,13 @@ const auth = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: 'User not found. Please login again.',
+      });
+    }
+
+    if (await isEmailBlocked(user.email)) {
+      return res.status(403).json({
+        success: false,
+        message: 'This account has been blocked from using Collexa.',
       });
     }
 

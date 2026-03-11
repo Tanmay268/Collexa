@@ -138,4 +138,58 @@ export const sendBugReportEmail = async ({ companyEmail, reporter, report }) => 
   return await sendEmail(companyEmail, subject, html);
 };
 
+export const sendAccountReportEmail = async ({ companyEmail, reporter, reportedAccount, reason, details }) => {
+  const subject = `Account Report: ${reportedAccount.email}`;
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: Arial, sans-serif; background: #f4f7fb; padding: 24px;">
+      <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 28px;">
+        <h2 style="margin-top: 0; color: #111827;">New Account Report</h2>
+        <p style="color: #4b5563;">A user has reported another account.</p>
+        <h3 style="color: #1f2937;">Reported Account</h3>
+        <p><strong>Name:</strong> ${reportedAccount.name}</p>
+        <p><strong>Email:</strong> ${reportedAccount.email}</p>
+        <p><strong>User ID:</strong> ${reportedAccount.id}</p>
+        <h3 style="color: #1f2937;">Reason</h3>
+        <p><strong>Reason:</strong> ${reason}</p>
+        <p><strong>Details:</strong><br />${(details || '').replace(/\n/g, '<br />') || 'No extra details provided.'}</p>
+        <h3 style="color: #1f2937;">Reporter</h3>
+        <p><strong>Name:</strong> ${reporter.name}</p>
+        <p><strong>Email:</strong> ${reporter.email}</p>
+        <p><strong>User ID:</strong> ${reporter.id}</p>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail(companyEmail, subject, html);
+};
+
+export const sendContactRequestEmail = async ({ sellerEmail, sellerName, buyer, listing }) => {
+  const subject = `Purchase Contact Request: ${listing.title}`;
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: Arial, sans-serif; background: #f4f7fb; padding: 24px;">
+      <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 28px;">
+        <h2 style="margin-top: 0; color: #111827;">A buyer wants to contact you</h2>
+        <p style="color: #4b5563;">Hi ${sellerName}, someone is interested in your listing on Collexa.</p>
+        <h3 style="color: #1f2937;">Listing</h3>
+        <p><strong>Title:</strong> ${listing.title}</p>
+        <p><strong>Category:</strong> ${listing.category}</p>
+        <p><strong>Price:</strong> INR ${listing.price}</p>
+        <h3 style="color: #1f2937;">Buyer Details</h3>
+        <p><strong>Name:</strong> ${buyer.name}</p>
+        <p><strong>Email:</strong> ${buyer.email}</p>
+        <p><strong>User ID:</strong> ${buyer.id}</p>
+        <p style="margin-top: 24px; color: #4b5563;">You can reply directly to this buyer using their email address.</p>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail(sellerEmail, subject, html);
+};
+
 export default sendEmail;
