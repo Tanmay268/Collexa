@@ -56,6 +56,14 @@ export const AuthProvider = ({ children }) => {
     return api.post('/auth/resend-otp', { email });
   };
 
+  const forgotPassword = async (email) => {
+    return api.post('/auth/forgot-password', { email });
+  };
+
+  const resetPassword = async (payload) => {
+    return api.post('/auth/reset-password', payload);
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -65,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, loading, login, signup, verifySignupOtp, resendSignupOtp, logout,
+      user, loading, login, signup, verifySignupOtp, resendSignupOtp, forgotPassword, resetPassword, logout,
       isAuthenticated: !!user,
       isAdmin: user?.isAdmin || false
     }}>

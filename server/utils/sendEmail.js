@@ -62,6 +62,50 @@ export const sendOTPEmail = async (email, otp) => {
   return await sendEmail(email, subject, html);
 };
 
+export const sendPasswordResetOTPEmail = async (email, otp) => {
+  const subject = 'Reset Your Collexa Password';
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #3b82f6; }
+        .otp-box { background: #eff6ff; border: 2px dashed #3b82f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0; }
+        .otp { font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; }
+        .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div class="logo">Collexa</div>
+          <p>VIT Student Marketplace</p>
+        </div>
+        
+        <h2>Reset Your Password</h2>
+        <p>Use the OTP below to reset your Collexa account password:</p>
+        
+        <div class="otp-box">
+          <div class="otp">${otp}</div>
+        </div>
+        
+        <p><strong>This OTP is valid for 10 minutes.</strong></p>
+        <p>If you did not request a password reset, you can ignore this email.</p>
+        
+        <div class="footer">
+          <p>&copy; 2025 Collexa. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail(email, subject, html);
+};
+
 export const sendBugReportEmail = async ({ companyEmail, reporter, report }) => {
   const subject = `Bug Report: ${report.title}`;
   const html = `

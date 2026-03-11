@@ -9,10 +9,10 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between gap-3">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-blue-600 sm:text-2xl">
+            <Link to="/" className="inline-flex min-h-[44px] items-center gap-2 text-xl font-bold text-blue-600 sm:min-h-0 sm:text-2xl">
               <span>Collexa</span>
             </Link>
-            <span className="ml-2 hidden text-sm text-gray-500 sm:inline">VIT Marketplace</span>
+            <span className="ml-2 hidden min-h-[44px] items-center text-sm text-gray-500 sm:inline-flex sm:min-h-0">VIT Marketplace</span>
           </div>
 
 
@@ -28,13 +28,13 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/my-listings"
-                  className="inline-flex min-h-[44px] items-center justify-center text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
+                  className="inline-flex min-h-[44px] items-center justify-center leading-none text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
                 >
                   <span className="sm:hidden">List</span>
                   <span className="hidden sm:inline">My Listings</span>
                 </Link>
                 <div className="relative group">
-                  <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
+                  <button className="inline-flex min-h-[44px] items-center space-x-2 text-gray-700 hover:text-blue-600 sm:min-h-0">
                     <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
@@ -72,7 +72,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/signup"
-                  className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:px-4 sm:text-base"
+                  className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:min-h-0 sm:px-4 sm:text-base"
                 >
                   Sign Up
                 </Link>

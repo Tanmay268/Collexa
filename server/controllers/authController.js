@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import generateOTP from '../utils/generateOTP.js';
-import { sendOTPEmail } from '../utils/sendEmail.js';
+import { sendOTPEmail, sendPasswordResetOTPEmail } from '../utils/sendEmail.js';
 import {
   createUser,
   deleteOTP,
@@ -171,6 +171,71 @@ export const resendOTP = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'New OTP sent to your email',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email',
+      });
+    }
+
+    const otp = generateOTP();
+    await saveOTP(email, otp);
+
+    const emailSent = await sendPasswordResetOTPEmail(email, otp);
+    if (!emailSent) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send reset OTP. Please try again.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset OTP sent to your email. Valid for 10 minutes.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email',
+      });
+    }
+
+    const otpRecord = await getOTP(email, otp);
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired OTP',
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await updateUser(user._id, { passwordHash });
+    await deleteOTP(email);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully. Please login with your new password.',
     });
   } catch (error) {
     next(error);

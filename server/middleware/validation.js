@@ -113,6 +113,32 @@ export const reportValidation = [
     .withMessage('Description cannot exceed 500 characters'),
 ];
 
+export const forgotPasswordValidation = [
+  body('email')
+    .trim()
+    .isEmail()
+    .withMessage('Invalid email format')
+    .normalizeEmail(),
+];
+
+export const resetPasswordValidation = [
+  body('email')
+    .trim()
+    .isEmail()
+    .withMessage('Invalid email format')
+    .normalizeEmail(),
+
+  body('otp')
+    .isLength({ min: 6, max: 6 })
+    .withMessage('OTP must be 6 digits')
+    .isNumeric()
+    .withMessage('OTP must contain only numbers'),
+
+  body('newPassword')
+    .isLength({ min: 8, max: 128 })
+    .withMessage('New password must be 8-128 characters'),
+];
+
 export const bugReportValidation = [
   body('title')
     .trim()

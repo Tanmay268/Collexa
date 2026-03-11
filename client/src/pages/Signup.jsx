@@ -1,7 +1,29 @@
 // Signup.jsx
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+const Toast = ({ message, onClose }) => (
+  <div className="fixed right-3 top-3 z-50 w-[calc(100%-1.5rem)] max-w-sm rounded-2xl border border-green-200 bg-white/95 p-4 shadow-lg backdrop-blur sm:right-4 sm:top-4">
+    <div className="flex items-start gap-3">
+      <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+        ✓
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-semibold text-slate-900">OTP Sent</p>
+        <p className="mt-1 text-sm text-slate-600">{message}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onClose}
+        className="text-slate-400 transition hover:text-slate-700"
+        aria-label="Close notification"
+      >
+        ×
+      </button>
+    </div>
+  </div>
+);
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -14,10 +36,20 @@ export default function Signup() {
   const [signupStep, setSignupStep] = useState('details');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [toast, setToast] = useState('');
   const [loading, setLoading] = useState(false);
+  const toastTimeoutRef = useRef(null);
   
   const { signup, verifySignupOtp, resendSignupOtp } = useAuth();
   const navigate = useNavigate();
+
+  const showToast = (text) => {
+    setToast(text);
+    window.clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToast('');
+    }, 3500);
+  };
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +66,9 @@ export default function Signup() {
     try {
       await signup(formData);
       setSignupStep('otp');
-      setMessage(`OTP sent to ${formData.email}`);
+      const successMessage = `OTP sent to ${formData.email}`;
+      setMessage(successMessage);
+      showToast(successMessage);
     } catch (err) {
       setError(err.message || 'Failed to create account');
     } finally {
@@ -68,7 +102,9 @@ export default function Signup() {
 
     try {
       await resendSignupOtp(formData.email);
-      setMessage(`A new OTP was sent to ${formData.email}`);
+      const successMessage = `A new OTP was sent to ${formData.email}`;
+      setMessage(successMessage);
+      showToast(successMessage);
     } catch (err) {
       setError(err.message || 'Failed to resend OTP');
     } finally {
@@ -85,10 +121,9 @@ export default function Signup() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 px-3 py-6 sm:px-4 sm:py-8">
+      {toast && <Toast message={toast} onClose={() => setToast('')} />}
       <div className="max-w-md w-full">
-        {/* Logo */}
         <div className="mb-5 text-center sm:mb-8">
-          <img src="/logo.svg" alt="Collexa logo" className="mx-auto mb-3 h-14 w-auto sm:mb-4 sm:h-20" />
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Create Account</h2>
           <p className="mt-2 text-sm sm:text-base text-gray-600">Join the VIT Collexa community</p>
         </div>

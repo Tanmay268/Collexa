@@ -46,7 +46,6 @@ export default function BugReport() {
       <div className="mx-auto max-w-2xl">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
           <div className="mb-6">
-            <img src="/logo.svg" alt="Collexa logo" className="mb-4 h-12 w-auto sm:h-14" />
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Support</p>
             <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">Report a Bug</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
