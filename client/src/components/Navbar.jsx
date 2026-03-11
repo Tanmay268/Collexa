@@ -6,36 +6,36 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between gap-3">
-          <div className="flex items-center">
-            <Link to="/" className="inline-flex min-h-[44px] items-center gap-2 text-xl font-bold text-blue-600 sm:min-h-0 sm:text-2xl">
-              <span>Collexa</span>
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-16 items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-1 items-center">
+            <Link to="/" className="inline-flex min-h-[44px] min-w-0 items-center gap-2 text-lg font-bold text-blue-600 sm:min-h-0 sm:text-2xl">
+              <span className="truncate">Collexa</span>
             </Link>
             <span className="ml-2 hidden min-h-[44px] items-center text-sm text-gray-500 sm:inline-flex sm:min-h-0">VIT Marketplace</span>
           </div>
 
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-4">
             {isAuthenticated ? (
               <>
                 <Link
                   to="/create-listing"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-base font-medium text-white transition hover:bg-blue-700 sm:h-auto sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-base font-medium text-white transition hover:bg-blue-700 sm:h-auto sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
                 >
                   <span className="sm:hidden">+</span>
                   <span className="hidden sm:inline">+ Create Listing</span>
                 </Link>
                 <Link
                   to="/my-listings"
-                  className="inline-flex min-h-[44px] items-center justify-center leading-none text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
+                  className="inline-flex min-h-[40px] items-center justify-center leading-none text-xs text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
                 >
                   <span className="sm:hidden">List</span>
                   <span className="hidden sm:inline">My Listings</span>
                 </Link>
                 <div className="relative group">
-                  <button className="inline-flex min-h-[44px] items-center space-x-2 text-gray-700 hover:text-blue-600 sm:min-h-0">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                  <button className="inline-flex min-h-[40px] items-center space-x-2 text-gray-700 hover:text-blue-600 sm:min-h-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <span className="hidden max-w-28 truncate sm:inline">{user?.name}</span>
