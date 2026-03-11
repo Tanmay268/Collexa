@@ -146,7 +146,7 @@ export default function CreateListing() {
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
               Images <span className="text-red-500">*</span>
-              <span className="text-gray-500 font-normal"> (1-5 images, max 5MB each)</span>
+              <span className="text-gray-500 font-normal"> (1-3 images, max 5MB each)</span>
             </label>
 
             {/* Image Previews */}

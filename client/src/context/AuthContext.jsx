@@ -13,6 +13,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const syncUser = (nextUser) => {
+    localStorage.setItem('user', JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -30,8 +35,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      syncUser(data.user);
       return data;
     } catch (error) {
       // Re-throw with a more user-friendly message
@@ -47,8 +51,7 @@ export const AuthProvider = ({ children }) => {
   const verifySignupOtp = async (payload) => {
     const data = await api.post('/auth/verify-otp', payload);
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setUser(data.user);
+    syncUser(data.user);
     return data;
   };
 
@@ -64,6 +67,30 @@ export const AuthProvider = ({ children }) => {
     return api.post('/auth/reset-password', payload);
   };
 
+  const refreshProfile = async () => {
+    const data = await api.get('/users/profile');
+    syncUser(data.user);
+    return data.user;
+  };
+
+  const updateProfile = async (payload) => {
+    const data = await api.put('/users/profile', payload);
+    syncUser({
+      ...user,
+      ...data.user,
+    });
+    return data;
+  };
+
+  const verifyProfilePhone = async (payload) => {
+    const data = await api.post('/users/profile/verify-phone', payload);
+    syncUser({
+      ...user,
+      ...data.user,
+    });
+    return data;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -73,7 +100,8 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, loading, login, signup, verifySignupOtp, resendSignupOtp, forgotPassword, resetPassword, logout,
+      user, loading, login, signup, verifySignupOtp, resendSignupOtp, forgotPassword, resetPassword,
+      refreshProfile, updateProfile, verifyProfilePhone, logout,
       isAuthenticated: !!user,
       isAdmin: user?.isAdmin || false
     }}>

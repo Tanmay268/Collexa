@@ -182,6 +182,7 @@ export const deleteOTP = async (email) => {
   await otpsCollection.doc(email.toLowerCase().trim()).delete();
 };
 
+
 export const createListingRecord = async (data) => {
   const ref = listingsCollection.doc();
   const timestamp = now();

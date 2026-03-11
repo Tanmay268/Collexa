@@ -185,6 +185,42 @@ export const contactRequestValidation = [
     .withMessage('Listing is required'),
 ];
 
+export const updateProfileValidation = [
+  body('name')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be 2-50 characters'),
+
+  body('year')
+    .optional({ nullable: true, checkFalsy: true })
+    .isIn(['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year', 'PG', 'Research'])
+    .withMessage('Invalid year'),
+
+  body('department')
+    .optional({ nullable: true, checkFalsy: true })
+    .trim()
+    .isLength({ max: 80 })
+    .withMessage('Department cannot exceed 80 characters'),
+
+  body('accountType')
+    .optional({ checkFalsy: true })
+    .isIn(['student', 'buyer', 'seller', 'buyer-seller'])
+    .withMessage('Invalid account type'),
+];
+
+export const firebasePhoneVerificationValidation = [
+  body('phone')
+    .trim()
+    .matches(/^[6-9]\d{9}$/)
+    .withMessage('Invalid Indian phone number'),
+
+  body('firebaseIdToken')
+    .trim()
+    .notEmpty()
+    .withMessage('Firebase ID token is required'),
+];
+
 export const idValidation = [
   param('id')
     .trim()
