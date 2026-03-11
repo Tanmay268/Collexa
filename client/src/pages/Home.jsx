@@ -59,7 +59,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          VIT Student Marketplace
+          Student Marketplace
         </h1>
         <p className="text-gray-600">
           Buy, sell, and rent items within the VIT community

@@ -28,7 +28,7 @@ export const sendOTPEmail = async (email, otp) => {
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
         .header { text-align: center; margin-bottom: 30px; }
-        .logo { font-size: 24px; font-weight: bold; color: #3b82f6; }
+        .brand { font-size: 24px; font-weight: bold; color: #3b82f6; }
         .otp-box { background: #eff6ff; border: 2px dashed #3b82f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0; }
         .otp { font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; }
         .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px; }
@@ -37,7 +37,7 @@ export const sendOTPEmail = async (email, otp) => {
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">Collexa</div>
+          <div class="brand">Collexa</div>
           <p>VIT Student Marketplace</p>
         </div>
         
@@ -72,7 +72,7 @@ export const sendPasswordResetOTPEmail = async (email, otp) => {
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
         .header { text-align: center; margin-bottom: 30px; }
-        .logo { font-size: 24px; font-weight: bold; color: #3b82f6; }
+        .brand { font-size: 24px; font-weight: bold; color: #3b82f6; }
         .otp-box { background: #eff6ff; border: 2px dashed #3b82f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0; }
         .otp { font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; }
         .footer { margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px; }
@@ -81,7 +81,7 @@ export const sendPasswordResetOTPEmail = async (email, otp) => {
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">Collexa</div>
+          <div class="brand">Collexa</div>
           <p>VIT Student Marketplace</p>
         </div>
         

@@ -2,7 +2,6 @@ const CACHE = 'collexa-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/logo.svg',
   '/manifest.json'
 ];
 

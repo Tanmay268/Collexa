@@ -6,56 +6,77 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between gap-2">
-          <div className="flex min-w-0 flex-1 items-center">
-            <Link to="/" className="inline-flex min-h-[44px] min-w-0 items-center gap-2 text-lg font-bold text-blue-600 sm:min-h-0 sm:text-2xl">
-              <span className="truncate">Collexa</span>
-            </Link>
-            <span className="ml-2 hidden min-h-[44px] items-center text-sm text-gray-500 sm:inline-flex sm:min-h-0">VIT Marketplace</span>
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-2 py-3 sm:h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-0">
+          <div className="flex min-w-0 items-start justify-between">
+            <div className="flex min-w-0 items-center">
+              <Link
+                to="/"
+                className="inline-flex min-h-[40px] min-w-0 items-center text-lg font-bold text-blue-600 sm:min-h-0 sm:text-2xl"
+              >
+                <span className="truncate">Collexa</span>
+              </Link>
+              <span className="ml-2 inline-flex items-center text-xs text-gray-500 sm:text-sm">
+                Marketplace
+              </span>
+            </div>
+
+            {isAuthenticated && (
+              <div className="relative group sm:hidden">
+                <button className="inline-flex min-h-[38px] max-w-[9rem] items-center justify-center rounded-full bg-blue-600 px-3 text-sm font-semibold text-white">
+                  <span className="truncate">{user?.name}</span>
+                </button>
+                <div className="absolute right-0 z-10 mt-2 hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
+                  <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Profile
+                  </Link>
+                  <Link to="/bug-report" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Report Bug
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
 
-
-          <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:overflow-visible sm:pb-0">
             {isAuthenticated ? (
               <>
                 <Link
                   to="/create-listing"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-base font-medium text-white transition hover:bg-blue-700 sm:h-auto sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
+                  className="inline-flex min-h-[38px] flex-shrink-0 items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:min-h-0 sm:px-4"
                 >
-                  <span className="sm:hidden">+</span>
-                  <span className="hidden sm:inline">+ Create Listing</span>
+                  + Create Listing
                 </Link>
                 <Link
                   to="/my-listings"
-                  className="inline-flex min-h-[40px] items-center justify-center leading-none text-xs text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
+                  className="inline-flex min-h-[38px] flex-shrink-0 items-center justify-center rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100 hover:text-blue-600 sm:min-h-0"
                 >
-                  <span className="sm:hidden">List</span>
-                  <span className="hidden sm:inline">My Listings</span>
+                  My Listings
                 </Link>
-                <div className="relative group">
-                  <button className="inline-flex min-h-[40px] items-center space-x-2 text-gray-700 hover:text-blue-600 sm:min-h-0">
+                <div className="relative hidden group sm:block">
+                  <button className="inline-flex items-center space-x-2 text-gray-700 hover:text-blue-600">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <span className="hidden max-w-28 truncate sm:inline">{user?.name}</span>
+                    <span className="max-w-28 truncate">{user?.name}</span>
                   </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-10">
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    >
+                  <div className="absolute right-0 z-10 mt-2 hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
+                    <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                       Profile
                     </Link>
-                    <Link
-                      to="/bug-report"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    >
+                    <Link to="/bug-report" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                       Report Bug
                     </Link>
                     <button
                       onClick={logout}
-                      className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                      className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
                     >
                       Logout
                     </button>
@@ -66,13 +87,13 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="inline-flex min-h-[44px] items-center justify-center text-sm text-gray-700 transition hover:text-blue-600 sm:min-h-0 sm:text-base"
+                  className="inline-flex min-h-[38px] flex-shrink-0 items-center justify-center rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100 hover:text-blue-600 sm:min-h-0"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:min-h-0 sm:px-4 sm:text-base"
+                  className="inline-flex min-h-[38px] flex-shrink-0 items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:min-h-0 sm:px-4"
                 >
                   Sign Up
                 </Link>
