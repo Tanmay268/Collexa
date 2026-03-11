@@ -8,6 +8,7 @@ import ListingDetails from './pages/ListingDetails';
 import CreateListing from './pages/CreateListing';
 import MyListings from './pages/MyListings';
 import Profile from './pages/Profile';
+import BugReport from './pages/BugReport';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/create-listing" element={<ProtectedRoute><CreateListing /></ProtectedRoute>} />
             <Route path="/my-listings" element={<ProtectedRoute><MyListings /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/bug-report" element={<ProtectedRoute><BugReport /></ProtectedRoute>} />
           </Routes>
         </div>
       </BrowserRouter>

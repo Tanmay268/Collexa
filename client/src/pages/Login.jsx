@@ -41,18 +41,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4 py-8">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 px-3 py-6 sm:px-4 sm:py-8">
       <div className="max-w-md w-full">
         {/* Logo */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+        <div className="mb-5 text-center sm:mb-8">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg sm:mb-4 sm:h-20 sm:w-20">
             <span className="text-white font-bold text-3xl sm:text-4xl">C</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome Back</h2>
           <p className="mt-2 text-sm sm:text-base text-gray-600">Sign in to your Collexa account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl bg-white p-5 shadow-sm sm:space-y-5 sm:p-8">
           {error && (
             <div className="bg-red-50 border-2 border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
               {error}
@@ -96,10 +96,10 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3.5 rounded-xl hover:bg-blue-700 disabled:bg-blue-400 font-semibold transition-colors shadow-md"
+            className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
           >
             {loading ? (
-              <span className="flex items-center justify-center space-x-2">
+              <span className="flex items-center justify-center gap-2 whitespace-nowrap">
                 <div className="w-5 h-5 spinner"></div>
                 <span>Signing in...</span>
               </span>

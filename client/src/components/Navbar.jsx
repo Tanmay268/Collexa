@@ -6,27 +6,28 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-3">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-blue-600">
+            <Link to="/" className="text-xl font-bold text-blue-600 sm:text-2xl">
               Collexa
             </Link>
-            <span className="ml-2 text-sm text-gray-500">VIT Marketplace</span>
+            <span className="ml-2 hidden text-sm text-gray-500 sm:inline">VIT Marketplace</span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {isAuthenticated ? (
               <>
                 <Link
                   to="/create-listing"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:px-4"
                 >
-                  + Create Listing
+                  <span className="sm:hidden">Sell</span>
+                  <span className="hidden sm:inline">+ Create Listing</span>
                 </Link>
                 <Link
                   to="/my-listings"
-                  className="text-gray-700 hover:text-blue-600 transition"
+                  className="hidden text-gray-700 transition hover:text-blue-600 sm:inline"
                 >
                   My Listings
                 </Link>
@@ -35,7 +36,7 @@ export default function Navbar() {
                     <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <span>{user?.name}</span>
+                    <span className="hidden max-w-28 truncate sm:inline">{user?.name}</span>
                   </button>
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-10">
                     <Link
@@ -43,6 +44,12 @@ export default function Navbar() {
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                     >
                       Profile
+                    </Link>
+                    <Link
+                      to="/bug-report"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      Report Bug
                     </Link>
                     <button
                       onClick={logout}
@@ -57,13 +64,13 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-blue-600 transition"
+                  className="text-sm text-gray-700 transition hover:text-blue-600 sm:text-base"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:px-4 sm:text-base"
                 >
                   Sign Up
                 </Link>

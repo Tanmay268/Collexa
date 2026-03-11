@@ -47,3 +47,12 @@ export const reportLimiter = rateLimit({
     message: 'Too many reports submitted. Please try again later.',
   },
 });
+
+export const bugReportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: {
+    success: false,
+    message: 'Too many bug reports submitted. Please try again later.',
+  },
+});

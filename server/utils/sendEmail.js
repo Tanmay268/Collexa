@@ -62,4 +62,36 @@ export const sendOTPEmail = async (email, otp) => {
   return await sendEmail(email, subject, html);
 };
 
+export const sendBugReportEmail = async ({ companyEmail, reporter, report }) => {
+  const subject = `Bug Report: ${report.title}`;
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: Arial, sans-serif; background: #f4f7fb; padding: 24px;">
+      <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 28px;">
+        <h2 style="margin-top: 0; color: #111827;">New Collexa Bug Report</h2>
+        <p style="color: #4b5563;">A customer submitted a bug report from the website.</p>
+
+        <div style="margin: 24px 0;">
+          <h3 style="margin-bottom: 8px; color: #1f2937;">Report</h3>
+          <p><strong>Title:</strong> ${report.title}</p>
+          <p><strong>Description:</strong><br />${report.description.replace(/\n/g, '<br />')}</p>
+          <p><strong>Page:</strong> ${report.pageUrl}</p>
+          <p><strong>Device:</strong> ${report.deviceInfo}</p>
+        </div>
+
+        <div style="margin: 24px 0;">
+          <h3 style="margin-bottom: 8px; color: #1f2937;">Reporter</h3>
+          <p><strong>Name:</strong> ${reporter.name}</p>
+          <p><strong>Email:</strong> ${reporter.email}</p>
+          <p><strong>User ID:</strong> ${reporter.id}</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return await sendEmail(companyEmail, subject, html);
+};
+
 export default sendEmail;

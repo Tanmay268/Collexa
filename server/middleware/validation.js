@@ -113,6 +113,30 @@ export const reportValidation = [
     .withMessage('Description cannot exceed 500 characters'),
 ];
 
+export const bugReportValidation = [
+  body('title')
+    .trim()
+    .isLength({ min: 5, max: 120 })
+    .withMessage('Title must be 5-120 characters'),
+
+  body('description')
+    .trim()
+    .isLength({ min: 20, max: 2000 })
+    .withMessage('Description must be 20-2000 characters'),
+
+  body('pageUrl')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 300 })
+    .withMessage('Page URL cannot exceed 300 characters'),
+
+  body('deviceInfo')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 300 })
+    .withMessage('Device info cannot exceed 300 characters'),
+];
+
 export const idValidation = [
   param('id')
     .trim()
