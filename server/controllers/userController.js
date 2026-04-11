@@ -12,6 +12,7 @@ const buildProfileUser = (user) => ({
   year: user.year || null,
   department: user.department || null,
   accountType: user.accountType || 'student',
+  showPhoneNumber: !!user.showPhoneNumber,
   profilePicture: user.profilePicture || null,
   isVerified: user.isVerified,
   isAdmin: user.isAdmin,
@@ -32,13 +33,15 @@ export const getUserProfile = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const { name, year, department, accountType } = req.body;
+    const { name, year, department, accountType, phone, showPhoneNumber } = req.body;
     const currentUser = await getUserById(req.userId);
     const user = await updateUser(req.userId, {
       name: name?.trim(),
       year: year || null,
       department: department?.trim() || null,
       accountType: accountType || currentUser.accountType || 'student',
+      phone: phone ? phone.trim() : null,
+      showPhoneNumber: showPhoneNumber === 'true' || showPhoneNumber === true,
       profilePicture: req.file ? req.file.path : undefined,
     });
 
@@ -52,33 +55,6 @@ export const updateProfile = async (req, res, next) => {
   }
 };
 
-export const verifyProfilePhone = async (req, res, next) => {
-  try {
-    const { phone, firebaseIdToken } = req.body;
-    const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
-    const normalizedPhone = `+91${phone.trim()}`;
-
-    if (decodedToken.phone_number !== normalizedPhone) {
-      return res.status(400).json({
-        success: false,
-        message: 'Phone verification failed. The verified Firebase phone number does not match.',
-      });
-    }
-
-    const user = await updateUser(req.userId, {
-      phone: phone.trim(),
-      phoneVerified: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      message: 'Phone number verified successfully.',
-      user: buildProfileUser(user),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const changePassword = async (req, res, next) => {
   try {

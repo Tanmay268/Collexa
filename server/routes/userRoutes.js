@@ -3,7 +3,6 @@ import {
   updateProfile,
   changePassword,
   getUserProfile,
-  verifyProfilePhone,
 } from '../controllers/userController.js';
 import auth from '../middleware/auth.js';
 import { uploadProfile } from '../config/cloudinary.js';
@@ -20,7 +19,6 @@ router.use(auth);
 
 router.get('/profile', getUserProfile);
 router.put('/change-password', changePassword);
-router.post('/profile/verify-phone', phoneVerificationLimiter, firebasePhoneVerificationValidation, validate, verifyProfilePhone);
 
 router.put(
   '/profile',

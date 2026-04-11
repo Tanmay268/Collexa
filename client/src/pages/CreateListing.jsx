@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function CreateListing() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -14,15 +16,24 @@ export default function CreateListing() {
     price: '',
     listingType: 'sell',
     rentDuration: 'per month',
+    showPhoneNumber: false,
   });
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+
+  // Initialize from global profile setting if available
+  useEffect(() => {
+    if (user && formData.showPhoneNumber === false && user.showPhoneNumber) {
+      setFormData(prev => ({ ...prev, showPhoneNumber: true }));
+    }
+  }, [user]);
 
   const categories = ['Books', 'Cycles', 'Electronics', 'Instruments', 'Sports Equipment', 'Lab Equipment', 'Others'];
   const conditions = ['New', 'Like New', 'Good', 'Fair'];
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleImageChange = (e) => {
@@ -88,6 +99,7 @@ export default function CreateListing() {
       data.append('condition', formData.condition);
       data.append('price', formData.price);
       data.append('listingType', formData.listingType);
+      data.append('showPhoneNumber', formData.showPhoneNumber);
 
       if (formData.listingType === 'rent') {
         data.append('rentDuration', formData.rentDuration);
@@ -167,7 +179,7 @@ export default function CreateListing() {
               ))}
 
               {images.length < 5 && (
-                <label className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <label className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-brand-500 hover:bg-blue-50 transition-all">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
@@ -201,7 +213,7 @@ export default function CreateListing() {
               placeholder="e.g., Engineering Mathematics Textbook"
               minLength="5"
               maxLength="100"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
               style={{ fontSize: '16px' }}
             />
             <p className="text-xs text-gray-500 mt-1">5-100 characters</p>
@@ -221,7 +233,7 @@ export default function CreateListing() {
               placeholder="Describe your item in detail..."
               minLength="10"
               maxLength="1000"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
               style={{ fontSize: '16px' }}
             ></textarea>
             <p className="text-xs text-gray-500 mt-1">10-1000 characters</p>
@@ -237,7 +249,7 @@ export default function CreateListing() {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500"
                 style={{ fontSize: '16px' }}
               >
                 {categories.map(cat => (
@@ -253,7 +265,7 @@ export default function CreateListing() {
                 name="condition"
                 value={formData.condition}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500"
                 style={{ fontSize: '16px' }}
               >
                 {conditions.map(cond => (
@@ -273,7 +285,7 @@ export default function CreateListing() {
                 name="listingType"
                 value={formData.listingType}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500"
                 style={{ fontSize: '16px' }}
               >
                 <option value="sell">For Sale</option>
@@ -289,7 +301,7 @@ export default function CreateListing() {
                   name="rentDuration"
                   value={formData.rentDuration}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500"
                   style={{ fontSize: '16px' }}
                 >
                   <option value="per day">Per Day</option>
@@ -314,10 +326,28 @@ export default function CreateListing() {
               min="0"
               max="100000"
               placeholder="Enter price"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500"
               style={{ fontSize: '16px' }}
             />
             <p className="text-xs text-gray-500 mt-1">0-100,000</p>
+          </div>
+
+          {/* Privacy Controls */}
+          <div className="flex items-start bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <div className="flex items-center h-5">
+              <input
+                id="showPhoneNumber"
+                name="showPhoneNumber"
+                type="checkbox"
+                checked={formData.showPhoneNumber}
+                onChange={handleChange}
+                className="w-5 h-5 text-brand-600 bg-white border-gray-300 rounded focus:ring-brand-500 focus:ring-2"
+              />
+            </div>
+            <div className="ml-3 text-sm">
+              <label htmlFor="showPhoneNumber" className="font-semibold text-gray-900">Show Phone Number</label>
+              <p className="text-gray-500 mt-0.5">Let buyers see your phone number mapped to your profile. If unchecked, buyers can still email you via the platform directly.</p>
+            </div>
           </div>
 
           {/* Submit Button */}
@@ -332,7 +362,7 @@ export default function CreateListing() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:flex-1 bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 disabled:bg-blue-400 font-semibold transition-colors"
+              className="w-full sm:flex-1 bg-brand-600 text-white py-3 rounded-xl hover:bg-brand-700 disabled:bg-blue-400 font-semibold transition-colors"
             >
               {loading ? (
                 <span className="flex items-center justify-center space-x-2">

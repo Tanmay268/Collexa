@@ -19,13 +19,13 @@ const router = express.Router();
 // IMPORTANT: Specific routes BEFORE dynamic routes
 
 // Public routes
-router.get('/', getAllListings);
+router.get('/', auth, getAllListings);
 
 // Protected routes - Must come BEFORE /:id
 router.get('/my-listings', auth, getMyListings);
 
 // Dynamic public route - Must be AFTER specific routes
-router.get('/:id', idValidation, validate, getListingById);
+router.get('/:id', auth, idValidation, validate, getListingById);
 
 // Other protected routes
 router.post(

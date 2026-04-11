@@ -46,7 +46,7 @@ export default function BugReport() {
       <div className="mx-auto max-w-2xl">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
           <div className="mb-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Support</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-600">Support</p>
             <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">Report a Bug</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
               Describe what broke, where it happened, and what device you were using. The report is emailed directly to the company inbox.
@@ -78,7 +78,7 @@ export default function BugReport() {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Signup button overlaps the form on Fold devices"
-                className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-brand-500"
                 style={{ fontSize: '16px' }}
               />
             </div>
@@ -95,7 +95,7 @@ export default function BugReport() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Tell us exactly what you did, what happened, and what you expected."
-                className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-brand-500"
                 style={{ fontSize: '16px' }}
               />
             </div>
@@ -111,7 +111,7 @@ export default function BugReport() {
                   type="text"
                   value={formData.pageUrl}
                   onChange={handleChange}
-                  className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-brand-500"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -125,7 +125,7 @@ export default function BugReport() {
                   type="text"
                   value={formData.deviceInfo}
                   onChange={handleChange}
-                  className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-2xl border-2 border-slate-200 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-brand-500"
                   style={{ fontSize: '16px' }}
                 />
               </div>

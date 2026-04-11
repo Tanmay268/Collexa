@@ -55,37 +55,37 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
       {/* Hero Section */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+      <div className="text-center mb-10 py-12 px-4 rounded-[2rem] bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4 relative z-10">
           Student Marketplace
         </h1>
-        <p className="text-gray-600">
+        <p className="text-xl font-medium text-brand-50 max-w-2xl mx-auto relative z-10">
           Buy, sell, and rent items within the VIT community
         </p>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
+      <div className="mb-8">
         <input
           type="text"
-          placeholder="Search for items..."
+          placeholder="Search for items, categories, or keywords..."
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-5 py-4 text-lg bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md focus:shadow-md focus:ring-4 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
         />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar */}
-        <div className="lg:w-64 flex-shrink-0">
-          <div className="bg-white p-6 rounded-lg shadow-md sticky top-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Filters</h2>
+        <div className="lg:w-72 flex-shrink-0">
+          <div className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Filters</h2>
               <button
                 onClick={clearFilters}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm font-semibold text-brand-600 hover:text-brand-700 transition-colors"
               >
                 Clear All
               </button>
@@ -99,7 +99,7 @@ export default function Home() {
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
@@ -161,14 +161,14 @@ export default function Home() {
                   placeholder="Min"
                   value={filters.minPrice}
                   onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={filters.maxPrice}
                   onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                 />
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function Home() {
         <div className="flex-1">
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
             </div>
           ) : listings.length === 0 ? (
             <div className="text-center py-12">
@@ -188,10 +188,10 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <div className="mb-4 text-sm text-gray-600">
+              <div className="mb-6 text-sm font-medium text-gray-500">
                 {listings.length} listing{listings.length !== 1 ? 's' : ''} found
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {listings.map(listing => (
                   <ListingCard key={listing._id} listing={listing} />
                 ))}

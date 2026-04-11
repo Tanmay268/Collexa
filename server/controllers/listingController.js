@@ -21,7 +21,7 @@ const withSeller = async (listing, includePrivateSellerFields = false) => {
           id: seller._id,
           name: seller.name,
           email: seller.email,
-          phone: seller.phone || null,
+          phone: listing.showPhoneNumber ? (seller.phone || null) : null,
           year: seller.year || null,
           department: seller.department || null,
           isVerified: seller.isVerified,
@@ -31,6 +31,7 @@ const withSeller = async (listing, includePrivateSellerFields = false) => {
           id: seller._id,
           name: seller.name,
           isVerified: seller.isVerified,
+          phone: listing.showPhoneNumber ? (seller.phone || null) : null,
         },
   };
 };
@@ -60,7 +61,7 @@ const filterListings = (listings, query) => {
 
 export const createListing = async (req, res, next) => {
   try {
-    const { title, description, category, condition, price, listingType, rentDuration } = req.body;
+    const { title, description, category, condition, price, listingType, rentDuration, showPhoneNumber } = req.body;
 
     const images = req.files.map((file) => ({
       url: file.path,
@@ -76,6 +77,7 @@ export const createListing = async (req, res, next) => {
       price: Number(price),
       listingType,
       rentDuration: listingType === 'rent' ? rentDuration : null,
+      showPhoneNumber: showPhoneNumber === 'true' || showPhoneNumber === true,
       images,
     });
 

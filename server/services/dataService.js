@@ -6,6 +6,7 @@ const listingsCollection = db.collection('listings');
 const reportsCollection = db.collection('reports');
 const otpsCollection = db.collection('otps');
 const blockedEmailsCollection = db.collection('blockedEmails');
+const notificationsCollection = db.collection('notifications');
 
 const isTimestamp = (value) =>
   value &&
@@ -54,6 +55,7 @@ export const getCollectionRefs = () => ({
   reportsCollection,
   otpsCollection,
   blockedEmailsCollection,
+  notificationsCollection,
 });
 
 export const now = () => new Date();
@@ -320,6 +322,72 @@ export const listReports = async () => {
   return snapshot.docs
     .map(docToObject)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+};
+
+export const createNotification = async ({ userId, type, message, link = null }) => {
+  const ref = notificationsCollection.doc();
+  const timestamp = now();
+
+  await ref.set({
+    userId,
+    type,
+    message,
+    link,
+    read: false,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
+
+  return getNotificationById(ref.id);
+};
+
+export const getNotificationById = async (notificationId) => {
+  const doc = await notificationsCollection.doc(notificationId).get();
+  return doc.exists ? docToObject(doc) : null;
+};
+
+export const getUserNotifications = async (userId) => {
+  const snapshot = await notificationsCollection
+    .where('userId', '==', userId)
+    .get();
+
+  return snapshot.docs
+    .map(docToObject)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+};
+
+export const markNotificationAsRead = async (notificationId) => {
+  await notificationsCollection.doc(notificationId).set(
+    {
+      read: true,
+      updatedAt: now(),
+    },
+    { merge: true }
+  );
+  return getNotificationById(notificationId);
+};
+
+export const markAllNotificationsAsRead = async (userId) => {
+  const snapshot = await notificationsCollection
+    .where('userId', '==', userId)
+    .where('read', '==', false)
+    .get();
+
+  if (snapshot.empty) return;
+
+  const batch = db.batch();
+  snapshot.docs.forEach((doc) => {
+    batch.set(
+      doc.ref,
+      {
+        read: true,
+        updatedAt: now(),
+      },
+      { merge: true }
+    );
+  });
+
+  await batch.commit();
 };
 
 export const paginate = buildPage;

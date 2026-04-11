@@ -134,7 +134,7 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your-email@vitstudent.ac.in"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -151,7 +151,7 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -171,7 +171,7 @@ export default function Login() {
                 value={resetData.email}
                 onChange={handleResetChange}
                 placeholder="your-email@vitstudent.ac.in"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 style={{ fontSize: '16px' }}
               />
             </div>
@@ -191,7 +191,7 @@ export default function Login() {
                   value={resetData.email}
                   onChange={handleResetChange}
                   placeholder="your-email@vitstudent.ac.in"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -208,7 +208,7 @@ export default function Login() {
                   value={resetData.otp}
                   onChange={(e) => setResetData((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '') }))}
                   placeholder="123456"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent tracking-[0.35em]"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent tracking-[0.35em]"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -224,7 +224,7 @@ export default function Login() {
                   value={resetData.newPassword}
                   onChange={handleResetChange}
                   placeholder="At least 8 characters"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -234,7 +234,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
+            className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-brand-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-brand-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2 whitespace-nowrap">
@@ -263,14 +263,14 @@ export default function Login() {
                     setMessage('');
                     setResetData((prev) => ({ ...prev, email: formData.email }));
                   }}
-                  className="font-semibold text-blue-600 hover:text-blue-700"
+                  className="font-semibold text-brand-600 hover:text-brand-700"
                 >
                   Forgot password?
                 </button>
               </div>
               <div className="pt-2 text-center text-sm sm:pt-1">
                 <span className="text-gray-600">Don't have an account? </span>
-                <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">
+                <Link to="/signup" className="text-brand-600 hover:text-brand-700 font-semibold">
                   Sign Up
                 </Link>
               </div>
@@ -304,7 +304,7 @@ export default function Login() {
                       setLoading(false);
                     }
                   }}
-                  className="font-semibold text-blue-600 hover:text-blue-700 disabled:text-blue-300"
+                  className="font-semibold text-brand-600 hover:text-brand-700 disabled:text-blue-300"
                   disabled={loading}
                 >
                   Resend OTP

@@ -1,22 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+// Firebase initialization is deleted natively from the application 
+// since SMS phone verification was disabled.
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
-
-const missingConfig = Object.entries(firebaseConfig)
-  .filter(([, value]) => !value)
-  .map(([key]) => key);
-
-if (missingConfig.length > 0) {
-  throw new Error(`Missing Firebase web environment variables: ${missingConfig.join(', ')}`);
-}
-
-const app = initializeApp(firebaseConfig);
-
-export const firebaseAuth = getAuth(app);
-export default app;
+export const firebaseAuth = null;
+export default null;

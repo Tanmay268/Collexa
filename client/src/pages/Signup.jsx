@@ -158,7 +158,7 @@ export default function Signup() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -175,7 +175,7 @@ export default function Signup() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your-name@vitstudent.ac.in"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
                 <p className="mt-1 text-xs text-gray-500">Must be a VIT student email</p>
@@ -193,7 +193,7 @@ export default function Signup() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 8 characters"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -209,7 +209,7 @@ export default function Signup() {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="10-digit mobile number"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -232,7 +232,7 @@ export default function Signup() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="123456"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent tracking-[0.4em]"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent tracking-[0.4em]"
                   style={{ fontSize: '16px' }}
                 />
               </div>
@@ -242,7 +242,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
+            className="flex min-h-[46px] w-full items-center justify-center rounded-xl bg-brand-600 px-4 py-0 text-sm font-semibold text-white shadow-md transition-colors hover:bg-brand-700 disabled:bg-blue-400 sm:min-h-[52px] sm:text-base"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2 whitespace-nowrap">
@@ -267,7 +267,7 @@ export default function Signup() {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={loading}
-                className="text-blue-600 hover:text-blue-700 font-semibold disabled:text-blue-300"
+                className="text-brand-600 hover:text-brand-700 font-semibold disabled:text-blue-300"
               >
                 Resend OTP
               </button>
@@ -276,7 +276,7 @@ export default function Signup() {
 
           <div className="pt-2 text-center text-sm sm:pt-1">
             <span className="text-gray-600">Already have an account? </span>
-            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+            <Link to="/login" className="text-brand-600 hover:text-brand-700 font-semibold">
               Login
             </Link>
           </div>

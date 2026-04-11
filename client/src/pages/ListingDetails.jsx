@@ -76,7 +76,7 @@ export default function ListingDetails() {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
         <p className="text-gray-500 mb-4">Listing not found</p>
-        <button onClick={() => navigate('/')} className="text-blue-600 hover:underline">
+        <button onClick={() => navigate('/')} className="text-brand-600 hover:underline">
           Go back home
         </button>
       </div>
@@ -223,7 +223,7 @@ export default function ListingDetails() {
                   <button
                     key={idx}
                     onClick={() => setCurrentImage(idx)}
-                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${currentImage === idx ? 'border-blue-600' : 'border-transparent opacity-60 hover:opacity-100'
+                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${currentImage === idx ? 'border-brand-600' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
@@ -241,14 +241,14 @@ export default function ListingDetails() {
                 {listing.title}
               </h1>
               <div className="flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold">
+                <span className="bg-brand-600 text-white px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold">
                   {listing.listingType === 'sell' ? 'For Sale' : 'For Rent'}
                 </span>
                 <span className="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold">
                   {listing.category}
                 </span>
                 <span className={`px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold ${listing.condition === 'New' ? 'bg-green-100 text-green-700' :
-                  listing.condition === 'Like New' ? 'bg-blue-100 text-blue-700' :
+                  listing.condition === 'Like New' ? 'bg-blue-100 text-brand-700' :
                     listing.condition === 'Good' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-orange-100 text-orange-700'
                   }`}>
@@ -259,9 +259,9 @@ export default function ListingDetails() {
 
             {/* Price */}
             <div className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-4 sm:p-5">
-              <p className="text-xs sm:text-sm text-blue-600 font-medium mb-1">Price</p>
+              <p className="text-xs sm:text-sm text-brand-600 font-medium mb-1">Price</p>
               <div className="flex items-baseline">
-                <span className="text-3xl sm:text-4xl font-bold text-blue-600">
+                <span className="text-3xl sm:text-4xl font-bold text-brand-600">
                   ₹{listing.price?.toLocaleString('en-IN')}
                 </span>
                 {listing.listingType === 'rent' && listing.rentDuration && (
@@ -284,11 +284,16 @@ export default function ListingDetails() {
             <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-5">
               <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Seller Information</h2>
               <div className="flex items-center mb-4">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-lg font-bold">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 bg-brand-600 rounded-full flex items-center justify-center text-white text-lg font-bold">
                   {listing.seller?.name?.charAt(0).toUpperCase()}
                 </div>
                 <div className="ml-3">
                   <p className="text-sm sm:text-base font-bold text-gray-900">{listing.seller?.name}</p>
+                  {listing.seller?.phone && (
+                    <p className="text-xs sm:text-sm font-semibold text-gray-600 mt-0.5">
+                      Phone: +91 {listing.seller.phone}
+                    </p>
+                  )}
                   {listing.seller?.isVerified && (
                     <p className="text-xs text-green-600 flex items-center">
                       <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -314,7 +319,7 @@ export default function ListingDetails() {
                 )}
                 <a
                   href={`mailto:${listing.seller?.email}`}
-                  className="flex items-center justify-center space-x-2 w-full bg-blue-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors"
+                  className="flex items-center justify-center space-x-2 w-full bg-brand-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

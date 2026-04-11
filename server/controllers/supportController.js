@@ -1,4 +1,4 @@
-import { getListingById, getUserById } from '../services/dataService.js';
+import { getListingById, getUserById, createNotification } from '../services/dataService.js';
 import { sendAccountReportEmail, sendBugReportEmail, sendContactRequestEmail } from '../utils/sendEmail.js';
 
 export const submitBugReport = async (req, res, next) => {
@@ -25,6 +25,17 @@ export const submitBugReport = async (req, res, next) => {
         success: false,
         message: 'Failed to submit bug report. Please try again.',
       });
+    }
+
+    try {
+      await createNotification({
+        userId: req.user?._id || req.userId,
+        type: 'bug_report',
+        message: `Your bug report "${title}" was submitted successfully. Thank you!`,
+        link: null,
+      });
+    } catch(err) {
+      console.error("Failed to create notification", err);
     }
 
     res.status(201).json({
@@ -76,6 +87,17 @@ export const submitAccountReport = async (req, res, next) => {
         success: false,
         message: 'Failed to submit account report. Please try again.',
       });
+    }
+
+    try {
+      await createNotification({
+        userId: req.user?._id || req.userId,
+        type: 'report_submitted',
+        message: `We received your report about ${reportedUser.name}. Thank you for helping keep Collexa safe.`,
+        link: null,
+      });
+    } catch(err) {
+      console.error("Failed to create notification", err);
     }
 
     res.status(201).json({
@@ -134,6 +156,17 @@ export const requestSellerContact = async (req, res, next) => {
         success: false,
         message: 'Failed to notify the seller. Please try again.',
       });
+    }
+
+    try {
+      await createNotification({
+        userId: seller._id,
+        type: 'contact_request',
+        message: `${req.user?.name || 'A user'} is interested in your listing: ${listing.title}`,
+        link: `/listing/${listing._id}`,
+      });
+    } catch(err) {
+      console.error("Failed to create notification", err);
     }
 
     res.status(200).json({
